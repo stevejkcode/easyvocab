@@ -10,7 +10,7 @@ from translate import translate_word
 
 ## Env variables for process params
 DECK       = os.environ.get('ANKI_DECK',       'French') # TODO: Update this with the real deck name
-COLLECTION = os.environ.get('ANKI_COLLECTION', '~/.local/share/User/collection.anki2')
+COLLECTION = os.environ.get('ANKI_COLLECTION', '~/.local/share/Anki2/User/collection.anki2')
 
 
 def get_model_id(col, model_name):
