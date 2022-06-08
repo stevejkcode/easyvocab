@@ -18,7 +18,7 @@ def translate_word(word):
         translations.extend(_all_translations[0][1])
 
     # De-dupe the translations array because sometimes google's api is kinda stoopid
-    translations = list(set(translations))
+    translations = list(dict.fromkeys(translations))
 
     translations = translations[:3]
 
