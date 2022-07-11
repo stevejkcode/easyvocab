@@ -5,7 +5,7 @@ from aqt.utils import showInfo, qconnect
 # import all of the Qt GUI library
 from aqt.qt import *
 
-from . import main_dialog
+from .ui import main_dialog, file_select_dialog
 
 # We're going to add a menu item below. First we want to create a function to
 # be called when the menu item is activated.
@@ -17,25 +17,16 @@ def testFunction() -> None:
     # # show a message box
     # showInfo("Card count: %d" % cardCount)
 
-    # Create and show the input cards dialog
+    # # Create and show the input cards dialog
     # dialog = QDialog()
     # dialog.ui = main_dialog.MainDialog()
     # dialog.ui.setupUi(dialog)
     
     # dialog.exec_()
 
-    # test select file code
-    fileSelector = QFileDialog()
-    fileSelector.setFileMode(QFileDialog.ExistingFile)
-    fileSelector.setAcceptMode(QFileDialog.AcceptOpen)
-    fileSelector.setNameFilter("Text files (*.txt)")
-
-    # widget = QWidget()
-    # fileName = QFileDialog.getOpenFileName(widget, 'Open file', '~', 'Image files (*.jpg *.gif)')
-
-    if fileSelector.exec_():
-        fileName = fileSelector.selectedFiles()
-        showInfo(f"file selected {fileName[0]}")
+    # test file select
+    filename = file_select_dialog.selectFile()
+    print(filename)
 
 
 # create a new menu item, "test"
