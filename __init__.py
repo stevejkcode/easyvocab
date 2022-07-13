@@ -1,3 +1,6 @@
+import os
+import sys
+
 # import the main window object (mw) from aqt
 from aqt import mw
 # import the "show info" tool from utils.py
@@ -5,7 +8,15 @@ from aqt.utils import showInfo, qconnect
 # import all of the Qt GUI library
 from aqt.qt import *
 
-from .ui import main_dialog, file_select_dialog
+sys.path.append(os.path.join(os.path.dirname(__file__), "site-packages"))
+
+# Internal imports
+from .ui import main_dialog
+from .main import generate_cards
+
+
+# Named constants
+DECK = os.environ.get('ANKI_DECK', 'French')
 
 # We're going to add a menu item below. First we want to create a function to
 # be called when the menu item is activated.
@@ -21,12 +32,25 @@ def testFunction() -> None:
     dialog = QDialog()
     dialog.ui = main_dialog.MainDialog()
     dialog.ui.setupUi(dialog)
+
+    # Wire accept button to trigger generation process
+    dialog.ui.buttonBox.accepted.connect(handle_accept(dialog))
     
     dialog.exec_()
 
-    # test file select
-    # filename = file_select_dialog.selectFile()
-    # print(filename)
+    # print(dialog.ui.textEdit.toPlainText())
+
+
+
+def handle_accept(dialog):
+    def _f():
+        text        = dialog.ui.textEdit.toPlainText()
+        collection  = mw.col
+        deck        = DECK
+
+        return generate_cards(collection, deck, text, {})
+    
+    return _f
 
 
 # create a new menu item, "test"

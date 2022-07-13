@@ -1,12 +1,16 @@
 # import anki
 
 import os
+import sys
 
-from anki.collection import Collection
 from anki.decks import DeckId
+from anki.collection import Collection
 
-from translate import translate_word
+from aqt import mw
 
+from .translate import translate_word
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "site-packages"))
 
 ## Env variables for process params
 DECK       = os.environ.get('ANKI_DECK',       'French') # TODO: Update this with the real deck name
@@ -25,44 +29,48 @@ def find_dupes(col, deck, fieldname, value):
     cards = col.find_cards(f'\"deck:{deck}\" \"{fieldname}:{value}\"')
     return cards
 
-def main():
-    # Open collection
-    col = Collection(COLLECTION)
+def generate_cards(collection, deck, text, options):
+    text = text.split('\n')
+
+    if not collection or type(collection) is str:
+        # Open collection
+        collection = Collection(collection)  
 
     # Retrieve deck id
-    deck_id = get_deck_id(col, DECK) # TODO: Replace this with actual deck name param
+    deck_id = get_deck_id(collection, deck) # TODO: Replace this with actual deck name param
 
     # Retrieve note model id
-    model_id = get_model_id(col, 'Basic')
+    model_id = get_model_id(collection, 'Basic')
 
-    # # Open words file
-    with open("./words.txt", "r") as words:
-        for word in words:
-        # For each word
-            # Remove any random whitespace or crud from the question
-            question = word.strip()
+    print(text)
+    print(deck_id, model_id)
 
-            ## Filter for dupes
-            # Find duplicate cards
-            dupes = find_dupes(col, DECK, 'Front', question)
+    for word in text:
+    # For each word
+        # Remove any random whitespace or crud from the question
+        question = word.strip()
 
-            # If there are any dupes, continue rather than adding this card to the deck 
-            if len(dupes) > 0: continue
+        ## Filter for dupes
+        # Find duplicate cards
+        dupes = find_dupes(collection, deck, 'Front', question)
 
-            print(f'translating {question}')
+        # If there are any dupes, continue rather than adding this card to the deck 
+        if len(dupes) > 0: continue
 
-            # Translate
-            answer = ', '.join(translate_word(question))
+        print(f'translating {question}')
 
-            # Create card with original text + definition
-            note = col.new_note(model_id)
-            note.fields = [question, answer]
+        # Translate
+        answer = ', '.join(translate_word(question))
 
-            # Add card to deck
-            col.add_note(note, deck_id)
+        # Create card with original text + definition
+        note = collection.new_note(model_id)
+        note.fields = [question, answer]
 
-    col.close()
+        # Add card to deck
+        collection.add_note(note, deck_id)
+
+    # collection.close()
 
 
 ## __main__
-main()
+# main()
