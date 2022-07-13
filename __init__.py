@@ -18,15 +18,15 @@ def testFunction() -> None:
     # showInfo("Card count: %d" % cardCount)
 
     # # Create and show the input cards dialog
-    # dialog = QDialog()
-    # dialog.ui = main_dialog.MainDialog()
-    # dialog.ui.setupUi(dialog)
+    dialog = QDialog()
+    dialog.ui = main_dialog.MainDialog()
+    dialog.ui.setupUi(dialog)
     
-    # dialog.exec_()
+    dialog.exec_()
 
     # test file select
-    filename = file_select_dialog.selectFile()
-    print(filename)
+    # filename = file_select_dialog.selectFile()
+    # print(filename)
 
 
 # create a new menu item, "test"

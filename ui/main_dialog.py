@@ -9,6 +9,7 @@
 ################################################################################
 
 from aqt.qt import *
+from . import file_select_dialog
 
 
 class MainDialog(object):
@@ -55,8 +56,12 @@ class MainDialog(object):
 
         self.gridLayout.addWidget(self.label_2, 5, 1, 1, 4)
 
+        # select file button
         self.pushButton = QPushButton(self.groupBox)
         self.pushButton.setObjectName(u"pushButton")
+
+        # connect select file button to the select file dialog
+        self.pushButton.clicked.connect(populateFileText(self, file_select_dialog.selectFile))
 
         self.gridLayout.addWidget(self.pushButton, 1, 0, 1, 2)
 
@@ -124,3 +129,23 @@ class MainDialog(object):
         self.textEdit.setPlaceholderText(QCoreApplication.translate("Dialog", u"Enter words...", None))
     # retranslateUi
 
+    # Set the text within the main words entry text box
+    def setBoxText(self, text):
+        self.textEdit.setText(text)
+
+
+# Helper functions
+
+# Curried function to populate the text edit field
+# when user selects a file, this code will open the selected file
+# and place the text inside the widget
+def populateFileText(dialog: MainDialog, f):
+    def _f():
+        filename = f()
+
+        if filename and filename != '':
+            print(filename)
+            with open(filename, 'r') as file:
+                dialog.setBoxText(str(file.read()))
+
+    return _f
