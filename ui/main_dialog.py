@@ -8,6 +8,8 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
+# import the main window object (mw) from aqt
+from aqt import mw
 from aqt.qt import *
 from . import file_select_dialog
 
@@ -113,6 +115,9 @@ class MainDialog(object):
         self.buttonBox.rejected.connect(Dialog.reject)
 
         QMetaObject.connectSlotsByName(Dialog)
+
+        # populate the deck list from anki into the combo box
+        self.populateDecks(self.comboBox)
     # setupUi
 
     def retranslateUi(self, Dialog):
@@ -147,6 +152,12 @@ class MainDialog(object):
     # Set the text within the main words entry text box
     def setBoxText(self, text):
         self.textEdit.setText(text)
+
+    def populateDecks(self, comboBox):
+        decks = mw.col.decks.all_names_and_ids()
+
+        for deck in decks:
+            comboBox.addItem(deck.name, deck)
 
 
 # Helper functions
