@@ -12,10 +12,6 @@ from .translate import translate_word
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "site-packages"))
 
-## Env variables for process params
-DECK       = os.environ.get('ANKI_DECK',       'French') # TODO: Update this with the real deck name
-COLLECTION = os.environ.get('ANKI_COLLECTION', '~/.local/share/Anki2/User/collection.anki2')
-
 
 def get_model_id(col, model_name):
     return col.models.id_for_name(model_name)
@@ -28,6 +24,7 @@ def get_deck_id(col, deck_name):
 def find_dupes(col, deck, fieldname, value):
     cards = col.find_cards(f'\"deck:{deck}\" \"{fieldname}:{value}\"')
     return cards
+
 
 def generate_cards(collection, deck, text, options):
     text = text.split('\n')
@@ -69,6 +66,12 @@ def generate_cards(collection, deck, text, options):
 
         # Add card to deck
         collection.add_note(note, deck_id)
+
+        # Generate a reverse card if reverse cards is enabled
+        if options.get('reverse') or options.get('reverse') == 'true':
+            rnote = collection.new_note(model_id)
+            rnote.fields = [answer, question]   # flip the answer and question 
+            collection.add_note(rnote, deck_id)
 
     # collection.close()
 

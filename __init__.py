@@ -57,6 +57,10 @@ def handle_accept(dialog):
         dest = dialog.ui.comboBox_3.currentData()
         options['language'] = {'src': src, 'dest': dest}
 
+        # Get the reverse setting from the dialog
+        reverse = dialog.ui.radioButton.isChecked()
+        options['reverse'] = reverse
+
         return generate_cards(collection, deck, text, options)
     
     return _f
