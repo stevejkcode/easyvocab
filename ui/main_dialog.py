@@ -8,23 +8,35 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
+import os
+import sys
+
 # import the main window object (mw) from aqt
 from aqt import mw
 from aqt.qt import *
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "site-packages"))
+import googletrans
+
 from . import file_select_dialog
 
 
 class MainDialog(object):
     def setupUi(self, Dialog):
-        if not Dialog.objectName():
-            Dialog.setObjectName(u"Dialog")
+       if not Dialog.objectName():
+        Dialog.setObjectName(u"Dialog")
         Dialog.resize(514, 473)
         self.groupBox = QGroupBox(Dialog)
         self.groupBox.setObjectName(u"groupBox")
         self.groupBox.setGeometry(QRect(0, 0, 511, 471))
+        self.buttonBox = QDialogButtonBox(self.groupBox)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setGeometry(QRect(160, 440, 166, 25))
+        self.buttonBox.setOrientation(Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
         self.widget = QWidget(self.groupBox)
         self.widget.setObjectName(u"widget")
-        self.widget.setGeometry(QRect(60, 10, 384, 397))
+        self.widget.setGeometry(QRect(61, 11, 386, 397))
         self.gridLayout = QGridLayout(self.widget)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -33,12 +45,8 @@ class MainDialog(object):
 
         self.gridLayout.addWidget(self.textEdit, 0, 0, 1, 5)
 
-        # select file button
         self.pushButton = QPushButton(self.widget)
         self.pushButton.setObjectName(u"pushButton")
-
-        # connect select file button to the select file dialog
-        self.pushButton.clicked.connect(populateFileText(self, file_select_dialog.selectFile))
 
         self.gridLayout.addWidget(self.pushButton, 1, 0, 1, 2)
 
@@ -48,67 +56,66 @@ class MainDialog(object):
 
         self.horizontalSpacer_4 = QSpacerItem(328, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.gridLayout.addItem(self.horizontalSpacer_4, 2, 0, 1, 5)
+        self.gridLayout.addItem(self.horizontalSpacer_4, 2, 0, 2, 5)
+
+        self.horizontalSpacer_5 = QSpacerItem(68, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.gridLayout.addItem(self.horizontalSpacer_5, 3, 2, 2, 2)
 
         self.label_3 = QLabel(self.widget)
         self.label_3.setObjectName(u"label_3")
 
-        self.gridLayout.addWidget(self.label_3, 3, 0, 1, 2)
+        self.gridLayout.addWidget(self.label_3, 4, 0, 1, 2)
 
         self.label_4 = QLabel(self.widget)
         self.label_4.setObjectName(u"label_4")
 
-        self.gridLayout.addWidget(self.label_4, 3, 4, 1, 1)
+        self.gridLayout.addWidget(self.label_4, 4, 3, 1, 2)
 
         self.comboBox_2 = QComboBox(self.widget)
         self.comboBox_2.setObjectName(u"comboBox_2")
 
-        self.gridLayout.addWidget(self.comboBox_2, 4, 0, 1, 4)
+        self.gridLayout.addWidget(self.comboBox_2, 5, 0, 1, 3)
 
         self.comboBox_3 = QComboBox(self.widget)
         self.comboBox_3.setObjectName(u"comboBox_3")
 
-        self.gridLayout.addWidget(self.comboBox_3, 4, 4, 1, 1)
+        self.gridLayout.addWidget(self.comboBox_3, 5, 3, 1, 5)
 
         self.comboBox = QComboBox(self.widget)
         self.comboBox.setObjectName(u"comboBox")
 
-        self.gridLayout.addWidget(self.comboBox, 5, 0, 1, 3)
+        self.gridLayout.addWidget(self.comboBox, 6, 0, 1, 3)
 
         self.label = QLabel(self.widget)
         self.label.setObjectName(u"label")
 
-        self.gridLayout.addWidget(self.label, 5, 3, 1, 1)
+        self.gridLayout.addWidget(self.label, 6, 3, 1, 1)
 
         self.horizontalSpacer_2 = QSpacerItem(138, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.gridLayout.addItem(self.horizontalSpacer_2, 5, 4, 1, 1)
+        self.gridLayout.addItem(self.horizontalSpacer_2, 6, 4, 1, 1)
 
         self.radioButton = QRadioButton(self.widget)
         self.radioButton.setObjectName(u"radioButton")
 
-        self.gridLayout.addWidget(self.radioButton, 6, 0, 1, 3)
+        self.gridLayout.addWidget(self.radioButton, 7, 0, 1, 3)
 
         self.horizontalSpacer_3 = QSpacerItem(178, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.gridLayout.addItem(self.horizontalSpacer_3, 6, 3, 1, 2)
+        self.gridLayout.addItem(self.horizontalSpacer_3, 7, 3, 1, 2)
 
         self.spinBox = QSpinBox(self.widget)
         self.spinBox.setObjectName(u"spinBox")
         self.spinBox.setValue(2)
 
-        self.gridLayout.addWidget(self.spinBox, 7, 0, 1, 1)
+        self.gridLayout.addWidget(self.spinBox, 8, 0, 1, 1)
 
         self.label_2 = QLabel(self.widget)
         self.label_2.setObjectName(u"label_2")
 
-        self.gridLayout.addWidget(self.label_2, 7, 1, 1, 4)
+        self.gridLayout.addWidget(self.label_2, 8, 1, 1, 4)
 
-        self.buttonBox = QDialogButtonBox(self.groupBox)
-        self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setGeometry(QRect(160, 440, 166, 25))
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
 
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
@@ -116,8 +123,9 @@ class MainDialog(object):
 
         QMetaObject.connectSlotsByName(Dialog)
 
-        # populate the deck list from anki into the combo box
-        self.populateDecks(self.comboBox)
+        # perform final setup actions
+        # note that these are actions outside of the ones auto generated by QtDesigner
+        self.customSetup()
     # setupUi
 
     def retranslateUi(self, Dialog):
@@ -149,6 +157,17 @@ class MainDialog(object):
         self.label_2.setText(QCoreApplication.translate("Dialog", u"Default number of translations", None))
     # retranslateUi
 
+    def customSetup(self):
+        # connect select file button to the select file dialog
+        self.pushButton.clicked.connect(populateFileText(self, file_select_dialog.selectFile))
+
+        # populate the deck list from anki into the combo box
+        self.populateDecks(self.comboBox)
+
+        # populate the set of source and target languages into their respective combo box
+        self.populateLanguages(self.comboBox_2)
+        self.populateLanguages(self.comboBox_3)
+
     # Set the text within the main words entry text box
     def setBoxText(self, text):
         self.textEdit.setText(text)
@@ -158,6 +177,13 @@ class MainDialog(object):
 
         for deck in decks:
             comboBox.addItem(deck.name, deck)
+
+    def populateLanguages(self, comboBox):
+        languages = googletrans.LANGUAGES
+
+        for language_code, language_name in languages.items():
+            print(language_name)
+            # comboBox.addItem(language_name, language_code)
 
 
 # Helper functions
