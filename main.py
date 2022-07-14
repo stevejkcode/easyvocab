@@ -27,7 +27,7 @@ def find_dupes(col, deck, fieldname, value):
 
 
 # Process an individual word, creating cards for it as needed
-def process_word(collection, deck, word, translations, reverse, src, dest, deck_id, model_id):
+def process_word(collection, deck, word, i, count, translations, reverse, src, dest, deck_id, model_id, progress_f):
     # Remove any random whitespace or crud from the question
     question = word.strip()
 
@@ -40,7 +40,7 @@ def process_word(collection, deck, word, translations, reverse, src, dest, deck_
     dupes = find_dupes(collection, deck.name, 'Front', question)
 
     # If there are any dupes, continue rather than adding this card to the deck 
-    if len(dupes) > 0: return
+    if len(dupes) > 0: return progress_f(word, i, count)
 
     print(f'translating {question}')
 
@@ -59,27 +59,34 @@ def process_word(collection, deck, word, translations, reverse, src, dest, deck_
     if reverse:
         rnote = collection.new_note(model_id)
         rnote.fields = [answer, question]   # flip the answer and question 
-        collection.add_note(rnote, deck_id)      
+        collection.add_note(rnote, deck_id)
+
+    return progress_f(word, i, count)
 
 # Outer function for running the card generation process
 # Note that this is run inside a background process in anki (hence the use of currying)
-def process_words(collection, deck, words, translations, reverse, src, dest, deck_id, model_id):
+def process_words(collection, deck, words, translations, reverse, src, dest, deck_id, model_id, progress_f):
     def _f():
+        count = len(words)
+        i = 0
+
         for word in words:
-            process_word(collection, deck, word, translations, reverse, src, dest, deck_id, model_id)
+            process_word(collection, deck, word, i + 1, count, translations, reverse, src, dest, deck_id, model_id, progress_f)
+            i += 1
 
     return _f
 
 # Simple callback function for closing out the overall background generation routine
-def finish_f(close_f):
+def finish_f(main_dialog, progress_dialog):
     def _f(future):
         print(f'finished with result: {future.result()}')
-        close_f()
+        progress_dialog.close()
+        main_dialog.close()
 
     return _f
 
 
-def generate_cards(collection, deck, text, options, close_f):
+def generate_cards(collection, deck, text, options, main_dialog, progress_dialog):
     text = text.split('\n')
 
     reverse = False
@@ -109,9 +116,12 @@ def generate_cards(collection, deck, text, options, close_f):
     # Retrieve note model id
     model_id = get_model_id(collection, 'Basic')
 
+    progress_f = progress_dialog.ui.updateProgress
+
     # Trigger the card generation process in the background
     # finish_f will be called when the process is finished
-    mw.taskman.run_in_background(process_words(collection, deck, text, translations, reverse, src, dest, deck_id, model_id), finish_f(close_f))
+    mw.taskman.run_in_background(process_words(collection, deck, text, translations, reverse, src, dest, deck_id, model_id, progress_f),
+                                finish_f(main_dialog, progress_dialog))
 
 
 ## __main__
