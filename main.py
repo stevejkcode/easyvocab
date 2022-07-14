@@ -26,8 +26,59 @@ def find_dupes(col, deck, fieldname, value):
     return cards
 
 
+# Process an individual word, creating cards for it as needed
+def process_word(collection, deck, word, translations, reverse, src, dest, deck_id, model_id):
+    # Remove any random whitespace or crud from the question
+    question = word.strip()
+
+    # Reject any cards with blank text
+    if word == '':
+        return
+
+    ## Filter for dupes
+    # Find duplicate cards
+    dupes = find_dupes(collection, deck.name, 'Front', question)
+
+    # If there are any dupes, continue rather than adding this card to the deck 
+    if len(dupes) > 0: return
+
+    print(f'translating {question}')
+
+    # Translate
+    translation = translate_word(question, translations, src, dest)
+    answer = ', '.join(translation)
+
+    # Create card with original text + definition
+    note = collection.new_note(model_id)
+    note.fields = [question, answer]
+
+    # Add card to deck
+    collection.add_note(note, deck_id)
+
+    # Generate a reverse card if reverse cards is enabled
+    if reverse:
+        rnote = collection.new_note(model_id)
+        rnote.fields = [answer, question]   # flip the answer and question 
+        collection.add_note(rnote, deck_id)      
+
+# Outer function for running the card generation process
+# Note that this is run inside a background process in anki (hence the use of currying)
+def process_words(collection, deck, words, translations, reverse, src, dest, deck_id, model_id):
+    def _f():
+        for word in words:
+            process_word(collection, deck, word, translations, reverse, src, dest, deck_id, model_id)
+
+    return _f
+
+# Simple callback function for closing out the overall background generation routine
+def finish_f(future):
+    print(f'finished with result: {future.result()}')
+
+
 def generate_cards(collection, deck, text, options):
     text = text.split('\n')
+
+    reverse = False
 
     # default translations number
     translations = 2
@@ -41,6 +92,9 @@ def generate_cards(collection, deck, text, options):
     if options and options.get('translations'):
         translations = options.get('translations')
 
+    if options and options.get('reverse'):
+        reverse = options.get('reverse')
+
     if not collection or type(collection) is str:
         # Open collection
         collection = Collection(collection)
@@ -51,37 +105,9 @@ def generate_cards(collection, deck, text, options):
     # Retrieve note model id
     model_id = get_model_id(collection, 'Basic')
 
-    for word in text:
-    # For each word
-        # Remove any random whitespace or crud from the question
-        question = word.strip()
-
-        ## Filter for dupes
-        # Find duplicate cards
-        dupes = find_dupes(collection, deck.name, 'Front', question)
-
-        # If there are any dupes, continue rather than adding this card to the deck 
-        if len(dupes) > 0: continue
-
-        print(f'translating {question}')
-
-        # Translate
-        answer = ', '.join(translate_word(question, translations, src = src, dest = dest))
-
-        # Create card with original text + definition
-        note = collection.new_note(model_id)
-        note.fields = [question, answer]
-
-        # Add card to deck
-        collection.add_note(note, deck_id)
-
-        # Generate a reverse card if reverse cards is enabled
-        if options.get('reverse') or options.get('reverse') == 'true':
-            rnote = collection.new_note(model_id)
-            rnote.fields = [answer, question]   # flip the answer and question 
-            collection.add_note(rnote, deck_id)
-
-    # collection.close()
+    # Trigger the card generation process in the background
+    # finish_f will be called when the process is finished
+    mw.taskman.run_in_background(process_words(collection, deck, text, translations, reverse, src, dest, deck_id, model_id), finish_f)
 
 
 ## __main__

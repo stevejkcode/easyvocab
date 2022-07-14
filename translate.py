@@ -1,7 +1,12 @@
+import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "site-packages"))
+
 from googletrans import Translator
 
 # Helper function to translate a single word via google translate
-# Returns the top translation along with up to 2 alternatives if they are returned by google
+# Returns the top translation along with up to numtrans alternatives if they are returned by google
 # Note this guy can't return grammatical gender :(
 def translate_word(word, numtrans, src='auto', dest='en'):
     if src is None:
