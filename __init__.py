@@ -14,23 +14,10 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "site-packages"))
 from .ui import main_dialog
 from .main import generate_cards
 
-
-# Named constants
-DECK = os.environ.get('ANKI_DECK', 'French')
-
 # We're going to add a menu item below. First we want to create a function to
 # be called when the menu item is activated.
-
-def testFunction() -> None:
-    # # get the number of cards in the current collection, which is stored in
-    # # the main window
-    # cardCount = mw.col.cardCount()
-    # # show a message box
-    # showInfo("Card count: %d" % cardCount)
-
-    # print(mw.col.decks.all_names_and_ids())
-
-    # # Create and show the input cards dialog
+def openMainDialog() -> None:
+    # Create and show the input cards dialog
     dialog = QDialog()
     dialog.ui = main_dialog.MainDialog()
     dialog.ui.setupUi(dialog)
@@ -40,8 +27,8 @@ def testFunction() -> None:
     
     dialog.exec_()
 
-    # print(dialog.ui.textEdit.toPlainText())
-
+# Helper function to trigger the card generation process when the accept button is clicked
+# Retrieves options from the UI and forwards them along with the list of words to the process 
 def handle_accept(dialog):
     def _f():
         text       = dialog.ui.textEdit.toPlainText()
@@ -72,7 +59,7 @@ def handle_accept(dialog):
 
 # create a new menu item, "test"
 action = QAction("Generate Foreign Language Cards", mw)
-# set it to call testFunction when it's clicked
-qconnect(action.triggered, testFunction)
+# set it to call openMainDialog when it's clicked
+qconnect(action.triggered, openMainDialog)
 # and add it to the tools menu
 mw.form.menuTools.addAction(action)
