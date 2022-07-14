@@ -171,7 +171,6 @@ class MainDialog(object):
         # set the default target language to english
         index = self.comboBox_3.findData("en")
         self.comboBox_3.setCurrentIndex(index)
-        print(index)
 
     # Set the text within the main words entry text box
     def setBoxText(self, text):
@@ -184,6 +183,9 @@ class MainDialog(object):
             comboBox.addItem(deck.name, deck)
 
     def populateLanguages(self, comboBox):
+        # Add default empty entry for language dialog
+        comboBox.addItem("", None)
+
         languages = googletrans.LANGUAGES
 
         for language_code, language_name in languages.items():
