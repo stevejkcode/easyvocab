@@ -3,9 +3,9 @@ from googletrans import Translator
 # Helper function to translate a single word via google translate
 # Returns the top translation along with up to 2 alternatives if they are returned by google
 # Note this guy can return grammatical gender :(
-def translate_word(word):
+def translate_word(word, src='fr', dest='en'):
     translator = Translator()
-    translation_response = translator.translate(word, dest='en', src='fr')
+    translation_response = translator.translate(word, dest, src)
 
     extra_data = translation_response.extra_data
     
