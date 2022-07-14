@@ -71,11 +71,15 @@ def process_words(collection, deck, words, translations, reverse, src, dest, dec
     return _f
 
 # Simple callback function for closing out the overall background generation routine
-def finish_f(future):
-    print(f'finished with result: {future.result()}')
+def finish_f(close_f):
+    def _f(future):
+        print(f'finished with result: {future.result()}')
+        close_f()
+
+    return _f
 
 
-def generate_cards(collection, deck, text, options):
+def generate_cards(collection, deck, text, options, close_f):
     text = text.split('\n')
 
     reverse = False
@@ -107,7 +111,7 @@ def generate_cards(collection, deck, text, options):
 
     # Trigger the card generation process in the background
     # finish_f will be called when the process is finished
-    mw.taskman.run_in_background(process_words(collection, deck, text, translations, reverse, src, dest, deck_id, model_id), finish_f)
+    mw.taskman.run_in_background(process_words(collection, deck, text, translations, reverse, src, dest, deck_id, model_id), finish_f(close_f))
 
 
 ## __main__

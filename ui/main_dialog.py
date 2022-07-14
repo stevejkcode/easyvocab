@@ -118,7 +118,6 @@ class MainDialog(object):
 
 
         self.retranslateUi(Dialog)
-        self.buttonBox.accepted.connect(Dialog.accept)
         self.buttonBox.rejected.connect(Dialog.reject)
 
         QMetaObject.connectSlotsByName(Dialog)
@@ -172,6 +171,7 @@ class MainDialog(object):
         index = self.comboBox_3.findData("en")
         self.comboBox_3.setCurrentIndex(index)
 
+
     # Set the text within the main words entry text box
     def setBoxText(self, text):
         self.textEdit.setText(text)
@@ -188,7 +188,6 @@ class MainDialog(object):
                 comboBox.setCurrentIndex(index)
             
             index += 1
-        
 
     def populateLanguages(self, comboBox):
         # Add default empty entry for language dialog

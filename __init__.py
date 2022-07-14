@@ -24,7 +24,8 @@ def openMainDialog() -> None:
 
     # Wire accept button to trigger generation process
     dialog.ui.buttonBox.accepted.connect(handle_accept(dialog))
-    
+
+    # Trigger the dialog
     dialog.exec_()
 
 # Helper function to trigger the card generation process when the accept button is clicked
@@ -52,7 +53,7 @@ def handle_accept(dialog):
         translations = dialog.ui.spinBox.value()
         options['translations'] = translations
 
-        return generate_cards(collection, deck, text, options)
+        generate_cards(collection, deck, text, options, dialog.close)
     
     return _f
 
