@@ -31,7 +31,7 @@ class MainDialog(object):
         self.groupBox.setGeometry(QRect(0, 0, 511, 471))
         self.buttonBox = QDialogButtonBox(self.groupBox)
         self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setGeometry(QRect(160, 440, 166, 25))
+        self.buttonBox.setGeometry(QRect(165, 440, 166, 25))
         self.buttonBox.setOrientation(Qt.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
         self.widget = QWidget(self.groupBox)
@@ -168,6 +168,11 @@ class MainDialog(object):
         self.populateLanguages(self.comboBox_2)
         self.populateLanguages(self.comboBox_3)
 
+        # set the default target language to english
+        index = self.comboBox_3.findData("en")
+        self.comboBox_3.setCurrentIndex(index)
+        print(index)
+
     # Set the text within the main words entry text box
     def setBoxText(self, text):
         self.textEdit.setText(text)
@@ -182,8 +187,7 @@ class MainDialog(object):
         languages = googletrans.LANGUAGES
 
         for language_code, language_name in languages.items():
-            print(language_name)
-            # comboBox.addItem(language_name, language_code)
+            comboBox.addItem(capitalize_name(language_name), language_code)
 
 
 # Helper functions
@@ -201,3 +205,6 @@ def populateFileText(dialog: MainDialog, f):
                 dialog.setBoxText(str(file.read()))
 
     return _f
+
+def capitalize_name(name):
+    return ' '.join([word.capitalize() for word in name.split(' ')])
