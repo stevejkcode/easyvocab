@@ -28,6 +28,8 @@ def testFunction() -> None:
     # # show a message box
     # showInfo("Card count: %d" % cardCount)
 
+    # print(mw.col.decks.all_names_and_ids())
+
     # # Create and show the input cards dialog
     dialog = QDialog()
     dialog.ui = main_dialog.MainDialog()
@@ -40,15 +42,22 @@ def testFunction() -> None:
 
     # print(dialog.ui.textEdit.toPlainText())
 
-
-
 def handle_accept(dialog):
     def _f():
-        text        = dialog.ui.textEdit.toPlainText()
-        collection  = mw.col
-        deck        = DECK
+        text       = dialog.ui.textEdit.toPlainText()
+        collection = mw.col
 
-        return generate_cards(collection, deck, text, {})
+        options = {}
+
+        # Get the target deck from the dialog
+        deck = dialog.ui.comboBox.currentData()
+
+        # Get the language settings from the dialog
+        src  = dialog.ui.comboBox_2.currentData()
+        dest = dialog.ui.comboBox_3.currentData()
+        options['language'] = {'src': src, 'dest': dest}
+
+        return generate_cards(collection, deck, text, options)
     
     return _f
 
