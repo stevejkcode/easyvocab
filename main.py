@@ -29,13 +29,21 @@ def find_dupes(col, deck, fieldname, value):
 def generate_cards(collection, deck, text, options):
     text = text.split('\n')
 
+    # default translations number
+    translations = 2
+
+    # Get the source and destination language from the options if present
     if options and options.get('language'):
         dest = options.get('language').get('dest')
         src  = options.get('language').get('src')
 
+    # Get the number of translations from the options if present
+    if options and options.get('translations'):
+        translations = options.get('translations')
+
     if not collection or type(collection) is str:
         # Open collection
-        collection = Collection(collection)  
+        collection = Collection(collection)
 
     # Retrieve deck id
     deck_id = get_deck_id(collection, deck.name) # TODO: Replace this with actual deck name param
@@ -58,7 +66,7 @@ def generate_cards(collection, deck, text, options):
         print(f'translating {question}')
 
         # Translate
-        answer = ', '.join(translate_word(question, src, dest))
+        answer = ', '.join(translate_word(question, translations, src = src, dest = dest))
 
         # Create card with original text + definition
         note = collection.new_note(model_id)

@@ -61,6 +61,10 @@ def handle_accept(dialog):
         reverse = dialog.ui.radioButton.isChecked()
         options['reverse'] = reverse
 
+        # Get the number of translations to include
+        translations = dialog.ui.spinBox.value()
+        options['translations'] = translations
+
         return generate_cards(collection, deck, text, options)
     
     return _f
