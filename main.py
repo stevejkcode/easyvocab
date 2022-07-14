@@ -32,18 +32,19 @@ def find_dupes(col, deck, fieldname, value):
 def generate_cards(collection, deck, text, options):
     text = text.split('\n')
 
+    if options and options.get('language'):
+        dest = options.get('language').get('dest')
+        src  = options.get('language').get('src')
+
     if not collection or type(collection) is str:
         # Open collection
         collection = Collection(collection)  
 
     # Retrieve deck id
-    deck_id = get_deck_id(collection, deck) # TODO: Replace this with actual deck name param
+    deck_id = get_deck_id(collection, deck.name) # TODO: Replace this with actual deck name param
 
     # Retrieve note model id
     model_id = get_model_id(collection, 'Basic')
-
-    print(text)
-    print(deck_id, model_id)
 
     for word in text:
     # For each word
@@ -52,7 +53,7 @@ def generate_cards(collection, deck, text, options):
 
         ## Filter for dupes
         # Find duplicate cards
-        dupes = find_dupes(collection, deck, 'Front', question)
+        dupes = find_dupes(collection, deck.name, 'Front', question)
 
         # If there are any dupes, continue rather than adding this card to the deck 
         if len(dupes) > 0: continue
@@ -60,7 +61,7 @@ def generate_cards(collection, deck, text, options):
         print(f'translating {question}')
 
         # Translate
-        answer = ', '.join(translate_word(question))
+        answer = ', '.join(translate_word(question, src, dest))
 
         # Create card with original text + definition
         note = collection.new_note(model_id)
