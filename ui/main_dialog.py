@@ -179,8 +179,16 @@ class MainDialog(object):
     def populateDecks(self, comboBox):
         decks = mw.col.decks.all_names_and_ids()
 
+        index = 0
+
         for deck in decks:
             comboBox.addItem(deck.name, deck)
+
+            if deck.name == 'Default':
+                comboBox.setCurrentIndex(index)
+            
+            index += 1
+        
 
     def populateLanguages(self, comboBox):
         # Add default empty entry for language dialog
