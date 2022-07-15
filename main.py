@@ -40,7 +40,7 @@ def process_word(collection, deck, word, i, count, translations, reverse, src, d
     dupes = find_dupes(collection, deck.name, 'Front', question)
 
     # If there are any dupes, continue rather than adding this card to the deck 
-    if len(dupes) > 0: return progress_f(word, i, count)
+    if len(dupes) > 0: return mw.taskman.run_on_main(lambda: progress_f(word, i, count))
 
     print(f'translating {question}')
 
@@ -61,7 +61,7 @@ def process_word(collection, deck, word, i, count, translations, reverse, src, d
         rnote.fields = [answer, question]   # flip the answer and question 
         collection.add_note(rnote, deck_id)
 
-    return progress_f(word, i, count)
+    return mw.taskman.run_on_main(lambda: progress_f(word, i, count))
 
 # Outer function for running the card generation process
 # Note that this is run inside a background process in anki (hence the use of currying)
