@@ -68,7 +68,7 @@ def handle_accept(dialog_main):
     return _f
 
 
-# create a new menu item, "test"
+# create a new menu item, "Generate Foreign Language Cards"
 action = QAction("Generate Foreign Language Cards", mw)
 # set it to call open_main_dialog when it's clicked
 qconnect(action.triggered, open_main_dialog)

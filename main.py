@@ -25,6 +25,19 @@ def find_dupes(col, deck, fieldname, value):
     cards = col.find_cards(f'\"deck:{deck}\" \"{fieldname}:{value}\"')
     return cards
 
+# Create a card with the given question and answer
+def create_forward_card(collection, model_id, deck_id, question, answer):
+    # Create card with original text + definition
+    note = collection.new_note(model_id)
+    note.fields = [question, answer]
+
+    # Add card to deck
+    collection.add_note(note, deck_id)
+    return
+
+# Create a reverse card with the question and answer flipped
+def create_reverse_card(collection, model_id, deck_id, question, answer):
+    return create_forward_card(collection, model_id, deck_id, answer, question)
 
 # Process an individual word, creating cards for it as needed
 def process_word(collection, deck, word, i, count, translations, reverse, src, dest, deck_id, model_id, progress_f):
@@ -37,10 +50,14 @@ def process_word(collection, deck, word, i, count, translations, reverse, src, d
 
     ## Filter for dupes
     # Find duplicate cards
-    dupes = find_dupes(collection, deck.name, 'Front', question)
+    forward_dupes = find_dupes(collection, deck.name, 'Front', question)
+    reverse_dupes = find_dupes(collection, deck.name, 'Back', question)
 
-    # If there are any dupes, continue rather than adding this card to the deck 
-    if len(dupes) > 0: return mw.taskman.run_on_main(lambda: progress_f(word, i, count))
+    # If there are duplicate cards, continue rather than adding this card to the deck 
+    if len(forward_dupes) > 0 and len(reverse_dupes) > 0: return mw.taskman.run_on_main(lambda: progress_f(word, i, count))
+
+    # If reverse is false, skip the process if there are forward duplicate cards
+    if len(forward_dupes) > 0 and not reverse: return mw.taskman.run_on_main(lambda: progress_f(word, i, count))
 
     print(f'translating {question}')
 
@@ -48,18 +65,11 @@ def process_word(collection, deck, word, i, count, translations, reverse, src, d
     translation = translate_word(question, translations, src, dest)
     answer = ', '.join(translation)
 
-    # Create card with original text + definition
-    note = collection.new_note(model_id)
-    note.fields = [question, answer]
+    # Create forward card if necessary
+    if len(forward_dupes) == 0: create_forward_card(collection, model_id, deck_id, question, answer)
 
-    # Add card to deck
-    collection.add_note(note, deck_id)
-
-    # Generate a reverse card if reverse cards is enabled
-    if reverse:
-        rnote = collection.new_note(model_id)
-        rnote.fields = [answer, question]   # flip the answer and question 
-        collection.add_note(rnote, deck_id)
+    # Create reverse card if necessary
+    if reverse and len(reverse_dupes) == 0: create_reverse_card(collection, model_id, deck_id, question, answer)
 
     return mw.taskman.run_on_main(lambda: progress_f(word, i, count))
 
