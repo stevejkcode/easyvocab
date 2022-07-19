@@ -23,7 +23,7 @@ def build_asset(asset):
     if query_existing_model(asset): return
 
     # Create a new card type
-    model = mw.col.models.new('prettify-nord-basic-fl')
+    model = mw.col.models.new(asset.name)
 
     # Add fields
     add_fields(model, asset.fields)
