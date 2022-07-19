@@ -9,6 +9,7 @@ from anki.collection import Collection
 from aqt import mw
 
 from .translate import translate_word
+from .assets import build, nord_basic_fl
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "site-packages"))
 
@@ -97,6 +98,9 @@ def finish_f(main_dialog, progress_dialog):
 
 
 def generate_cards(collection, deck, text, options, main_dialog, progress_dialog):
+    # Build the note types if needed
+    build.build_asset(nord_basic_fl.model)
+
     text = text.split('\n')
 
     reverse = False
@@ -124,7 +128,7 @@ def generate_cards(collection, deck, text, options, main_dialog, progress_dialog
     deck_id = get_deck_id(collection, deck.name) # TODO: Replace this with actual deck name param
 
     # Retrieve note model id
-    model_id = get_model_id(collection, 'Basic')
+    model_id = get_model_id(collection, nord_basic_fl.model.name)
 
     progress_f = progress_dialog.ui.updateProgress
 
