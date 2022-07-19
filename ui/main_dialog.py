@@ -70,17 +70,17 @@ class MainDialog(object):
         self.label_4 = QLabel(self.widget)
         self.label_4.setObjectName(u"label_4")
 
-        self.gridLayout.addWidget(self.label_4, 4, 3, 1, 2)
+        self.gridLayout.addWidget(self.label_4, 4, 2, 1, 4)
 
         self.comboBox_2 = QComboBox(self.widget)
         self.comboBox_2.setObjectName(u"comboBox_2")
 
-        self.gridLayout.addWidget(self.comboBox_2, 5, 0, 1, 3)
+        self.gridLayout.addWidget(self.comboBox_2, 5, 0, 1, 2)
 
         self.comboBox_3 = QComboBox(self.widget)
         self.comboBox_3.setObjectName(u"comboBox_3")
 
-        self.gridLayout.addWidget(self.comboBox_3, 5, 3, 1, 5)
+        self.gridLayout.addWidget(self.comboBox_3, 5, 2, 1, 4)
 
         self.comboBox = QComboBox(self.widget)
         self.comboBox.setObjectName(u"comboBox")
