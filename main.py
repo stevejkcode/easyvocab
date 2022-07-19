@@ -6,10 +6,12 @@ import sys
 from anki.decks import DeckId
 from anki.collection import Collection
 
+from anki.notetypes_pb2 import ChangeNotetypeRequest
+
 from aqt import mw
 
 from .translate import translate_word
-from .assets import build, nord_basic_fl
+from .assets import build, nord_basic_fl, nord_basic_fl_reverse
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "site-packages"))
 
@@ -20,14 +22,14 @@ def get_model_id(col, model_name):
 def get_deck_id(col, deck_name):
     return col.decks.id_for_name(deck_name)
 
-# Find potential duplicate cards 
+# Find potential duplicate cards
 # Note that deck can be '*' to find duplicates across all decks
 def find_dupes(col, deck, fieldname, value):
-    cards = col.find_cards(f'\"deck:{deck}\" \"{fieldname}:{value}\"')
+    cards = col.find_notes(f'\"deck:{deck}\" \"{fieldname}:{value}\"')
     return cards
 
-# Create a card with the given question and answer
-def create_forward_card(collection, model_id, deck_id, question, answer):
+# Create cards for the notetype with the given question and answer
+def create_cards(collection, model_id, deck_id, question, answer):
     # Create card with original text + definition
     note = collection.new_note(model_id)
     note.fields = [question, answer]
@@ -36,9 +38,17 @@ def create_forward_card(collection, model_id, deck_id, question, answer):
     collection.add_note(note, deck_id)
     return
 
-# Create a reverse card with the question and answer flipped
-def create_reverse_card(collection, model_id, deck_id, question, answer):
-    return create_forward_card(collection, model_id, deck_id, answer, question)
+# Update the notetype of an existing basic card to a reverse card
+# This will add a reverse card to the existing forward card without
+# wiping out the stats of the forward card or needing to recreate it
+def update_basic_to_reverse(collection, note_id):
+    old_model = collection.models.by_name(nord_basic_fl.model.name)
+    new_model = collection.models.by_name(nord_basic_fl_reverse.model.name)
+    
+    request = ChangeNotetypeRequest()
+    request.ParseFromString(collection.models.change_notetype_info(old_notetype_id=old_model['id'], new_notetype_id=new_model['id']).input.SerializeToString())
+    request.note_ids.extend([ note_id ])
+    collection.models.change_notetype_of_notes(request)
 
 # Process an individual word, creating cards for it as needed
 def process_word(collection, deck, word, i, count, translations, reverse, src, dest, deck_id, model_id, progress_f):
@@ -60,17 +70,25 @@ def process_word(collection, deck, word, i, count, translations, reverse, src, d
     # If reverse is false, skip the process if there are forward duplicate cards
     if len(forward_dupes) > 0 and not reverse: return mw.taskman.run_on_main(lambda: progress_f(word, i, count))
 
+    # If reverse is enabled and a forward card already exists, change the notetype to reverse
+    # to automatically generate a matching reverse card 
+    if len(forward_dupes) > 0 and reverse:
+        update_basic_to_reverse(collection, forward_dupes[0])
+        return mw.taskman.run_on_main(lambda: progress_f(word, i, count))
+
     print(f'translating {question}')
 
     # Translate
     translation = translate_word(question, translations, src, dest)
     answer = ', '.join(translation)
 
+    create_cards(collection, model_id, deck_id, question, answer)
+
     # Create forward card if necessary
-    if len(forward_dupes) == 0: create_forward_card(collection, model_id, deck_id, question, answer)
+    # if len(forward_dupes) == 0: create_forward_card(collection, model_id, deck_id, question, answer)
 
     # Create reverse card if necessary
-    if reverse and len(reverse_dupes) == 0: create_reverse_card(collection, model_id, deck_id, question, answer)
+    # if reverse and len(reverse_dupes) == 0: create_reverse_card(collection, model_id, deck_id, question, answer)
 
     return mw.taskman.run_on_main(lambda: progress_f(word, i, count))
 
@@ -100,6 +118,7 @@ def finish_f(main_dialog, progress_dialog):
 def generate_cards(collection, deck, text, options, main_dialog, progress_dialog):
     # Build the note types if needed
     build.build_asset(nord_basic_fl.model)
+    build.build_asset(nord_basic_fl_reverse.model)
 
     text = text.split('\n')
 
@@ -125,11 +144,19 @@ def generate_cards(collection, deck, text, options, main_dialog, progress_dialog
         collection = Collection(collection)
 
     # Retrieve deck id
-    deck_id = get_deck_id(collection, deck.name) # TODO: Replace this with actual deck name param
+    deck_id = get_deck_id(collection, deck.name)
 
+    # # Forward model only version
+    # # Retrieve note model id
+    # model_id = get_model_id(collection, nord_basic_fl.model.name) 
+
+    # Forward and reverse model version
     # Retrieve note model id
-    model_id = get_model_id(collection, nord_basic_fl.model.name)
-
+    if reverse:
+        model_id = get_model_id(collection, nord_basic_fl_reverse.model.name)
+    else:
+        model_id = get_model_id(collection, nord_basic_fl.model.name)    
+                
     progress_f = progress_dialog.ui.updateProgress
 
     # Trigger the card generation process in the background
