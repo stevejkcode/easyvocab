@@ -12,7 +12,18 @@ with open(os.path.join(os.path.dirname(__file__), './qfmt.html'), 'r') as html:
 with open(os.path.join(os.path.dirname(__file__), './main.css'), 'r') as file:
     css = file.read()
 
-fields = ['Front', 'Back']
+# fields
+    # foreign language word
+    # your language definition
+    # foreign language explanation
+    # your language explanation
+fields = [
+    'ForeignLanguageWord',
+    'ForeignLanguageExplanation',
+    'ForeignLanguagePronunciation'
+    'YourLanguageDefinition',
+    'YourLanguageExplanation'
+]
 
 templates = [
     {
