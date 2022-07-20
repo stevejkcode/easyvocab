@@ -146,10 +146,6 @@ def generate_cards(collection, deck, text, options, main_dialog, progress_dialog
     # Retrieve deck id
     deck_id = get_deck_id(collection, deck.name)
 
-    # # Forward model only version
-    # # Retrieve note model id
-    # model_id = get_model_id(collection, nord_basic_fl.model.name) 
-
     # Forward and reverse model version
     # Retrieve note model id
     if reverse:
