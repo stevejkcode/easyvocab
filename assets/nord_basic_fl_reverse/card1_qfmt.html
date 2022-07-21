@@ -1,4 +1,4 @@
-<!-- Prettify by @pranavdeshai: Basic reverse (front)
+<!-- Prettify by @pranavdeshai: Basic (front)
 
 Version: 0.1.1
 Readme: https://github.com/pranavdeshai/anki-prettify
@@ -11,7 +11,8 @@ Links:
 -->
 <div class="prettify-flashcard">
   <div class="prettify-deck">{{Deck}}</div>
-  <div class="prettify-field prettify-field--front">{{edit:Front}}</div>
+  <div class="prettify-field prettify-field--front">{{edit:ForeignLanguageWord}}</div>
+	<div class="prettify-field pronunciation">{{ForeignLanguagePronunciation}}</div>
   {{#Tags}}
   <div class="prettify-tags">{{clickable:Tags}}</div>
   {{/Tags}}
@@ -53,4 +54,3 @@ Links:
   })
   deckEl.innerHTML = html.join('&nbsp;/&nbsp;')
 </script>
-

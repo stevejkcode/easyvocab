@@ -12,8 +12,10 @@ Links:
 :root {
   --card-max-width: 40em;
   --card-text-align: left;
-  --font-size-regular: 16px;
-  --font-size-small: 14px;
+   --font-size-large: 20px;
+  --font-size-regular: 18px;
+  --font-size-small: 16px;
+   --font-size-x-small: 14px;
   --font-family: "Rubik", -apple-system, sytem-ui, BlinkMacSystemFont, Segoe UI,
     Roboto, Helvetica, Arial, sans-serif;
   --img-width: 50%;
@@ -27,6 +29,7 @@ Links:
   background-color: #ececec;
   --text-fg: #434c5e;
   --text-fg-faint: #4c566a;
+  --text-fg-explanation: #3c8ec4;
   --text-bg-selected: #eceff4;
   --card-bg: #ffffff;
   --card-border: transparent;
@@ -45,8 +48,8 @@ Links:
   --link-fg-active: #8fbcbb;
   --link-bg-active: #eceff4;
   --bold-fg: #bf616a;
-  --italic-fg: #ebcb8b;
-  --bold-italic-fg: #d08770;
+  --italic-fg: #5eace0;;
+  --bold-italic-fg: #287ab1;
   --underline-fg: #a3be8c;
 }
 
@@ -55,6 +58,7 @@ Links:
   background-color: #242933;
   --text-fg: #e7e9f0;
   --text-fg-faint: #d8dee9;
+  --text-fg-explanation: #ffcf3f;
   --text-bg-selected: #3b4252;
   --card-bg: #2e3440;
   --card-border: transparent;
@@ -117,9 +121,34 @@ html:not(.mobile) .card {
   margin: 1em;
 }
 
+.prettify-field--front {
+  text-align: center;
+  font-size: var(--font-size-large);
+  margin: 0 0 .5em 0;
+}
+
 .prettify-field--back {
+  text-align: center;
   color: var(--text-fg-faint);
+  font-size: var(--font-size-regular);
+}
+
+.pronunciation {
+  text-align: center;
+  margin: 0 0 1em 0;
+}
+
+.language-explanation-word-type {
   font-size: var(--font-size-small);
+  font-style: italic;
+  font-weight: bold;
+  color: var(--text-fg-explanation);
+  margin: 0 0 .15em 2em;
+}
+
+.language-explanation-details {
+  font-size: var(--font-size-x-small);
+  margin: 0 0 1.25em 2.2em;
 }
 
 /* -------------------------------------------------- CLOZE */
@@ -325,4 +354,3 @@ u {
   font-weight: bold;
 }
 /* -------------------------------------------------- END OF THEME */
-
