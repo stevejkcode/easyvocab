@@ -95,25 +95,27 @@ def process_word(collection, deck, word, i, count, translations, reverse, src, d
     print(f'translating {question}')
 
     # Translate
-    translation = translate_word(question, translations, src, dest)
+    translations = translate_word(question, translations, src, dest)
+
+    translation = translations[0]
     answer = ', '.join(translation)
 
     card = {
         'ForeignLanguageWord': question,
         'YourLanguageDefinition': answer,
         'ForeignLanguagePronunciation': '',
-        'ForeignLanguageExplanationWordType_1': '',
-        'ForeignLanguageExplanationDetails_1': '',
-        'ForeignLanguageExplanationWordType_2': '',
-        'ForeignLanguageExplanationDetails_2': '',
-        'ForeignLanguageExplanationWordType_3': '',
-        'ForeignLanguageExplanationDetails_3': '',
-        'YourLanguageExplanationWordType_1': '',
-        'YourLanguageExplanationDetails_1': '',
-        'YourLanguageExplanationWordType_2': '',
-        'YourLanguageExplanationDetails_2': '',
-        'YourLanguageExplanationWordType_3': '',
-        'YourLanguageExplanationDetails_3': ''
+        'ForeignLanguageExplanationWordType_1': translations[1],
+        'ForeignLanguageExplanationDetails_1': translations[2],
+        'ForeignLanguageExplanationWordType_2': translations[3],
+        'ForeignLanguageExplanationDetails_2': translations[4],
+        'ForeignLanguageExplanationWordType_3': translations[5],
+        'ForeignLanguageExplanationDetails_3': translations[6],
+        'YourLanguageExplanationWordType_1': translations[7],
+        'YourLanguageExplanationDetails_1': translations[8],
+        'YourLanguageExplanationWordType_2': translations[9],
+        'YourLanguageExplanationDetails_2': translations[10],
+        'YourLanguageExplanationWordType_3': translations[11],
+        'YourLanguageExplanationDetails_3': translations[12]
     }
 
     create_cards(collection, model_id, deck_id, card)

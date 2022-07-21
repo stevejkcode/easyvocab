@@ -5,6 +5,48 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "site-packages"))
 
 from googletrans import Translator
 
+
+
+def pull_fl_explanation(extra_data, pos):
+    definitions = extra_data.get('definitions')
+
+    if definitions is not None and len(definitions) > pos:
+        foreign_language_explanation_word_type = definitions[pos][0]
+        foreign_language_explanation_details = ""
+        
+        i = 0
+        for definition in definitions[pos][1]:
+            text = f'{definition[0]}'
+
+            if len(definition) > 2 and definition[2] is not None: text += f'\n<i>{definition[2]}</i>'
+
+            foreign_language_explanation_details += text
+
+            if i + 1 < len(definitions[pos][1]):
+                foreign_language_explanation_details += '<br>'
+
+        return [
+            foreign_language_explanation_word_type,
+            foreign_language_explanation_details
+        ]
+    else:
+        return [ '', '' ]
+
+def pull_yl_explanation(extra_data, pos):
+    all_translations = extra_data.get('all-translations')
+
+    if all_translations is not None and len(all_translations) > pos:
+        your_language_explanation_word_type = all_translations[pos][0]
+        your_language_explanation_details = ', '.join([translation for translation in all_translations[pos][1]])
+
+        return [
+            your_language_explanation_word_type,
+            your_language_explanation_details
+        ]
+    else:
+        return [ '', '' ]
+
+
 # Helper function to translate a single word via google translate
 # Returns the top translation along with up to numtrans alternatives if they are returned by google
 # Note this guy can't return grammatical gender :(
@@ -21,10 +63,10 @@ def translate_word(word, numtrans, src='auto', dest='en'):
 
     extra_data = translation_response.extra_data
     
-    _translation      = extra_data.get('translation')
+    _translation      = translation_response.text
     _all_translations = extra_data.get('all-translations')
 
-    translations = [_translation[0][0]]
+    translations = [_translation]
 
     if _all_translations and _all_translations[0] and len(_all_translations[0][1]) > 0:
         translations.extend(_all_translations[0][1])
@@ -35,4 +77,30 @@ def translate_word(word, numtrans, src='auto', dest='en'):
     # Truncate the list of translations to the size specified
     translations = translations[ :numtrans ]
 
-    return [ translation.lower() for translation in translations ]
+    translations = [ translation.lower() for translation in translations ]
+
+    your_language_definition = translations
+
+    [ foreign_language_explanation_word_type_1, foreign_language_explanation_details_1 ] = pull_fl_explanation(extra_data, 0)
+    [ foreign_language_explanation_word_type_2, foreign_language_explanation_details_2 ] = pull_fl_explanation(extra_data, 1)
+    [ foreign_language_explanation_word_type_3, foreign_language_explanation_details_3 ] = pull_fl_explanation(extra_data, 2)
+
+    [ your_language_explanation_word_type_1, your_language_explanation_details_1 ] = pull_yl_explanation(extra_data, 0)
+    [ your_language_explanation_word_type_2, your_language_explanation_details_2 ] = pull_yl_explanation(extra_data, 1)
+    [ your_language_explanation_word_type_3, your_language_explanation_details_3 ] = pull_yl_explanation(extra_data, 2)  
+
+    return [
+        your_language_definition,
+        foreign_language_explanation_word_type_1,
+        foreign_language_explanation_details_1,
+        foreign_language_explanation_word_type_2,
+        foreign_language_explanation_details_2,
+        foreign_language_explanation_word_type_3,
+        foreign_language_explanation_details_3,
+        your_language_explanation_word_type_1,
+        your_language_explanation_details_1,
+        your_language_explanation_word_type_2,
+        your_language_explanation_details_2,
+        your_language_explanation_word_type_3,
+        your_language_explanation_details_3
+    ]
