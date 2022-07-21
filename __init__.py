@@ -1,14 +1,9 @@
-import os
-import sys
-
 # import the main window object (mw) from aqt
 from aqt import mw
 # import the "show info" tool from utils.py
 from aqt.utils import showInfo, qconnect
 # import all of the Qt GUI library
 from aqt.qt import *
-
-sys.path.append(os.path.join(os.path.dirname(__file__), "site-packages"))
 
 # Internal imports
 from .ui import main_dialog, progress_dialog

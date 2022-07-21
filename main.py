@@ -5,6 +5,7 @@ import sys
 
 from anki.decks import DeckId
 from anki.collection import Collection
+from anki.media import media_paths_from_col_path
 
 from anki.notetypes_pb2 import ChangeNotetypeRequest
 
@@ -12,6 +13,8 @@ from aqt import mw
 
 from .translate import translate_word
 from .assets import build, nord_basic_fl, nord_basic_fl_reverse
+from .tts import generate_tts
+from .hash import get_media_hash
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "site-packages"))
 
@@ -67,7 +70,7 @@ def update_basic_to_reverse(collection, note_id):
     collection.models.change_notetype_of_notes(request)
 
 # Process an individual word, creating cards for it as needed
-def process_word(collection, deck, word, i, count, translations, reverse, src, dest, deck_id, model_id, progress_f):
+def process_word(collection, deck, word, i, count, num_translations, reverse, src, dest, deck_id, model_id, progress_f):
     # Remove any random whitespace or crud from the question
     question = word.strip()
 
@@ -95,7 +98,7 @@ def process_word(collection, deck, word, i, count, translations, reverse, src, d
     print(f'translating {question}')
 
     # Translate
-    translations = translate_word(question, translations, src, dest)
+    translations = translate_word(question, num_translations, src, dest)
 
     translation = translations[0]
     answer = ', '.join(translation)
@@ -117,6 +120,24 @@ def process_word(collection, deck, word, i, count, translations, reverse, src, d
         'YourLanguageExplanationWordType_3': translations[11],
         'YourLanguageExplanationDetails_3': translations[12]
     }
+
+    # Generate text-to-speech
+    # create media filename
+    media_hash = get_media_hash(question)
+    media_filename = f'{media_hash}.mp3'
+
+    # get the media location
+    [ media_dir, _ ] = media_paths_from_col_path(collection.path)
+
+    # call tts to create the audio
+    tts = generate_tts(question, lang=src)
+
+    # save generated tts to the media dir
+    media_full_path = os.path.join(media_dir, media_filename)
+    tts.save(media_full_path)
+
+    # place media in the resulting card
+    card['ForeignLanguagePronunciation'] = f'[sound:{media_filename}]'
 
     create_cards(collection, model_id, deck_id, card)
 
