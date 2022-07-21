@@ -29,10 +29,26 @@ def find_dupes(col, deck, fieldname, value):
     return cards
 
 # Create cards for the notetype with the given question and answer
-def create_cards(collection, model_id, deck_id, question, answer):
+def create_cards(collection, model_id, deck_id, card):
     # Create card with original text + definition
     note = collection.new_note(model_id)
-    note.fields = [question, answer]
+    note.fields = [
+        card['ForeignLanguageWord'],
+        card['YourLanguageDefinition'],
+        card['ForeignLanguagePronunciation'],
+        card['ForeignLanguageExplanationWordType_1'],
+        card['ForeignLanguageExplanationDetails_1'],
+        card['ForeignLanguageExplanationWordType_2'],
+        card['ForeignLanguageExplanationDetails_2'],
+        card['ForeignLanguageExplanationWordType_3'],
+        card['ForeignLanguageExplanationDetails_3'],
+        card['YourLanguageExplanationWordType_1'],
+        card['YourLanguageExplanationDetails_1'],
+        card['YourLanguageExplanationWordType_2'],
+        card['YourLanguageExplanationDetails_2'],
+        card['YourLanguageExplanationWordType_3'],
+        card['YourLanguageExplanationDetails_3']
+    ]
 
     # Add card to deck
     collection.add_note(note, deck_id)
@@ -61,8 +77,8 @@ def process_word(collection, deck, word, i, count, translations, reverse, src, d
 
     ## Filter for dupes
     # Find duplicate cards
-    forward_dupes = find_dupes(collection, deck.name, 'Front', question)
-    reverse_dupes = find_dupes(collection, deck.name, 'Back', question)
+    forward_dupes = find_dupes(collection, deck.name, 'ForeignLanguageWord', question)
+    reverse_dupes = find_dupes(collection, deck.name, 'YourLanguageDefinition', question)
 
     # If there are duplicate cards, continue rather than adding this card to the deck 
     if len(forward_dupes) > 0 and len(reverse_dupes) > 0: return mw.taskman.run_on_main(lambda: progress_f(word, i, count))
@@ -82,7 +98,25 @@ def process_word(collection, deck, word, i, count, translations, reverse, src, d
     translation = translate_word(question, translations, src, dest)
     answer = ', '.join(translation)
 
-    create_cards(collection, model_id, deck_id, question, answer)
+    card = {
+        'ForeignLanguageWord': question,
+        'YourLanguageDefinition': answer,
+        'ForeignLanguagePronunciation': '',
+        'ForeignLanguageExplanationWordType_1': '',
+        'ForeignLanguageExplanationDetails_1': '',
+        'ForeignLanguageExplanationWordType_2': '',
+        'ForeignLanguageExplanationDetails_2': '',
+        'ForeignLanguageExplanationWordType_3': '',
+        'ForeignLanguageExplanationDetails_3': '',
+        'YourLanguageExplanationWordType_1': '',
+        'YourLanguageExplanationDetails_1': '',
+        'YourLanguageExplanationWordType_2': '',
+        'YourLanguageExplanationDetails_2': '',
+        'YourLanguageExplanationWordType_3': '',
+        'YourLanguageExplanationDetails_3': ''
+    }
+
+    create_cards(collection, model_id, deck_id, card)
 
     # Create forward card if necessary
     # if len(forward_dupes) == 0: create_forward_card(collection, model_id, deck_id, question, answer)
