@@ -10,6 +10,7 @@
 
 import os
 import sys
+import codecs
 
 # import the main window object (mw) from aqt
 from aqt import mw
@@ -209,8 +210,7 @@ def populateFileText(dialog: MainDialog, f):
         filename = f()
 
         if filename and filename != '':
-            print(filename)
-            with open(filename, 'r') as file:
+            with codecs.open(filename, mode='r', encoding='utf-8') as file:
                 dialog.setBoxText(str(file.read()))
 
     return _f
