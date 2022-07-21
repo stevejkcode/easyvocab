@@ -32,7 +32,7 @@ fields = [
 
 templates = [
     {
-        'name': 'forward-template',
+        'name': 'ForwardTemplate',
         'afmt': afmt,
         'qfmt': qfmt
     }

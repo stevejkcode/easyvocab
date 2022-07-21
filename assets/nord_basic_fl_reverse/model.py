@@ -38,12 +38,12 @@ fields = [
 
 templates = [
     {
-        'name': 'forward-template',
+        'name': 'ForwardTemplate',
         'afmt': card1_afmt,
         'qfmt': card1_qfmt
     },
     {
-        'name': 'reverse-template',
+        'name': 'ReverseTemplate',
         'afmt': card2_afmt,
         'qfmt': card2_qfmt
     }
