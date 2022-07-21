@@ -19,10 +19,20 @@ with open(os.path.join(os.path.dirname(__file__), './main.css'), 'r') as file:
     # your language explanation
 fields = [
     'ForeignLanguageWord',
-    'ForeignLanguageExplanation',
-    'ForeignLanguagePronunciation'
     'YourLanguageDefinition',
-    'YourLanguageExplanation'
+    'ForeignLanguagePronunciation',
+    'ForeignLanguageExplanationWordType_1',
+    'ForeignLanguageExplanationDetails_1',
+    'ForeignLanguageExplanationWordType_2',
+    'ForeignLanguageExplanationDetails_2',
+    'ForeignLanguageExplanationWordType_3',
+    'ForeignLanguageExplanationDetails_3',
+    'YourLanguageExplanationWordType_1',
+    'YourLanguageExplanationDetails_1',
+    'YourLanguageExplanationWordType_2',
+    'YourLanguageExplanationDetails_2',
+    'YourLanguageExplanationWordType_3',
+    'YourLanguageExplanationDetails_3',
 ]
 
 templates = [
