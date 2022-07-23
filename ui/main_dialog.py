@@ -157,9 +157,24 @@ class MainDialog(object):
         self.label_2.setText(QCoreApplication.translate("Dialog", u"Default number of translations", None))
     # retranslateUi
 
+
+    # Custom functions
+
+    # Call the select file dialog, and handle opening and wiring in the file contents to the text box
+    def populateFileText(self):
+        filename = file_select_dialog.selectFile()
+
+        if filename and filename != '':
+                with codecs.open(filename, mode='r', encoding='utf-8') as file:
+                    self.setBoxText(str(file.read()))
+
+        return
+
+    # Custom dialog setup
+    # Encapsulated in this function to limit the impact of UI changes / redesign
     def customSetup(self):
         # connect select file button to the select file dialog
-        self.pushButton.clicked.connect(populateFileText(self, file_select_dialog.selectFile))
+        self.pushButton.clicked.connect(self.populateFileText)
 
         # populate the deck list from anki into the combo box
         self.populateDecks(self.comboBox)
@@ -177,6 +192,7 @@ class MainDialog(object):
     def setBoxText(self, text):
         self.textEdit.setText(text)
 
+    # Retrieve decks from anki and use them to populate the combo box
     def populateDecks(self, comboBox):
         decks = mw.col.decks.all_names_and_ids()
 
@@ -190,6 +206,7 @@ class MainDialog(object):
             
             index += 1
 
+    # Pull languages from googletrans and populate the combo boxes
     def populateLanguages(self, comboBox):
         # Add default empty entry for language dialog
         comboBox.addItem("", None)
@@ -202,18 +219,6 @@ class MainDialog(object):
 
 # Helper functions
 
-# Curried function to populate the text edit field
-# when user selects a file, this code will open the selected file
-# and place the text inside the widget
-def populateFileText(dialog: MainDialog, f):
-    def _f():
-        filename = f()
-
-        if filename and filename != '':
-            with codecs.open(filename, mode='r', encoding='utf-8') as file:
-                dialog.setBoxText(str(file.read()))
-
-    return _f
-
+# Capitalize language names
 def capitalize_name(name):
     return ' '.join([word.capitalize() for word in name.split(' ')])
