@@ -9,7 +9,8 @@ rm -r **/__pycache__
 # Build deployment archive
 zip -9 -r anki-card-builder.ankiaddon \
     *.py \
+    src/*.py \
     manifest.json \
-    ui/*.py \
-    assets/* \
+    src/ui/*.py \
+    src/assets/* \
     site-packages

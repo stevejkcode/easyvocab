@@ -16,7 +16,7 @@ from .assets import build, nord_basic_fl, nord_basic_fl_reverse
 from .tts import generate_tts
 from .hash import get_media_hash
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "site-packages"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "site-packages"))
 
 
 def get_model_id(col, model_name):

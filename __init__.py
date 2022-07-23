@@ -6,8 +6,8 @@ from aqt.utils import showInfo, qconnect
 from aqt.qt import *
 
 # Internal imports
-from .ui import main_dialog, progress_dialog
-from .main import generate_cards
+from .src.ui import main_dialog, progress_dialog
+from .src.main import generate_cards
 
 # We're going to add a menu item below. First we want to create a function to
 # be called when the menu item is activated.
