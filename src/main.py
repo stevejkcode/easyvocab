@@ -1,12 +1,10 @@
 # import anki
 
 import os
-import sys
+import functools
 
 from anki.decks import DeckId
-from anki.collection import Collection
 from anki.media import media_paths_from_col_path
-
 from anki.notetypes_pb2 import ChangeNotetypeRequest
 
 from aqt import mw
@@ -16,8 +14,6 @@ from . import collection
 from .hash import get_media_hash
 from .translate import translate_word
 from .tts import generate_tts
-
-# sys.path.append(os.path.join(os.path.dirname(__file__), "..", "site-packages"))
 
 
 # Create cards for the notetype with the given question and answer
@@ -59,7 +55,29 @@ def update_basic_to_reverse(col, note_id):
     col.models.change_notetype_of_notes(request)
 
 # Process an individual word, creating cards for it as needed
-def process_word(col, deck, word, i, count, num_translations, reverse, src, dest, deck_id, model_id, progress_f):
+def process_word(col, deck, word, options, progress):
+    # default values
+    reverse = False
+    num_translations = 2
+
+    # Get the source and destination language from the options if present
+    if options and options.get('language'):
+        dest = options.get('language').get('dest')
+        src  = options.get('language').get('src')
+
+    # Get the number of translations from the options if present
+    if options and options.get('num_translations'):
+        num_translations = options.get('num_translations')
+
+    if options and options.get('reverse'):
+        reverse = options.get('reverse')
+
+    if options and options.get('deck'):
+        deck_id = options.get('deck').get('id')
+    
+    if options and options.get('model'):
+        model_id = options.get('model').get('id')
+
     # Remove any random whitespace or crud from the question
     question = word.strip()
 
@@ -73,16 +91,16 @@ def process_word(col, deck, word, i, count, num_translations, reverse, src, dest
     reverse_dupes = collection.find_dupes(col, deck.name, 'YourLanguageDefinition', question)
 
     # If there are duplicate cards, continue rather than adding this card to the deck 
-    if len(forward_dupes) > 0 and len(reverse_dupes) > 0: return mw.taskman.run_on_main(lambda: progress_f(word, i, count))
+    if len(forward_dupes) > 0 and len(reverse_dupes) > 0: return mw.taskman.run_on_main(progress)
 
     # If reverse is false, skip the process if there are forward duplicate cards
-    if len(forward_dupes) > 0 and not reverse: return mw.taskman.run_on_main(lambda: progress_f(word, i, count))
+    if len(forward_dupes) > 0 and not reverse: return mw.taskman.run_on_main(progress)
 
     # If reverse is enabled and a forward card already exists, change the notetype to reverse
     # to automatically generate a matching reverse card 
     if len(forward_dupes) > 0 and reverse:
         update_basic_to_reverse(col, forward_dupes[0])
-        return mw.taskman.run_on_main(lambda: progress_f(word, i, count))
+        return mw.taskman.run_on_main(progress)
 
     print(f'translating {question}')
 
@@ -128,80 +146,77 @@ def process_word(col, deck, word, i, count, num_translations, reverse, src, dest
     # place media in the resulting card
     card['ForeignLanguagePronunciation'] = f'[sound:{media_filename}]'
 
+    # generate final cards
     create_cards(col, model_id, deck_id, card)
 
-    # Create forward card if necessary
-    # if len(forward_dupes) == 0: create_forward_card(col, model_id, deck_id, question, answer)
-
-    # Create reverse card if necessary
-    # if reverse and len(reverse_dupes) == 0: create_reverse_card(col, model_id, deck_id, question, answer)
-
-    return mw.taskman.run_on_main(lambda: progress_f(word, i, count))
+    return mw.taskman.run_on_main(progress)
 
 # Outer function for running the card generation process
 # Note that this is run inside a background process in anki (hence the use of currying)
-def process_words(col, deck, words, translations, reverse, src, dest, deck_id, model_id, progress_f):
-    def _f():
-        count = len(words)
-        i = 0
+def process_words(col, deck, words, options, progress):
+    count = len(words)
+    i = 0
 
-        for word in words:
-            process_word(col, deck, word, i + 1, count, translations, reverse, src, dest, deck_id, model_id, progress_f)
-            i += 1
+    for word in words:
+        process_word(col, deck, word, options, progress(word, i + 1, count))
+        i += 1
 
-    return _f
+# Decorator to run the task function with supplied args and kwargs
+# Needed because the function to run in the background must be a function with no args
+def background_wrapper(task):
+    def outter(*args, **kwargs):
+        @functools.wraps(task)
+        def inner():
+            return task(*args, **kwargs)
+        return inner
+    return outter
 
 # Simple callback function for closing out the overall background generation routine
-def finish_f(main_dialog, progress_dialog):
-    def _f(future):
+def finish(dialog):
+    def wrap(future):
         print(f'finished with result: {future.result()}')
-        progress_dialog.close()
-        main_dialog.close()
+        dialog['progress'].close()
+        dialog['main'].close()
+    return wrap
 
-    return _f
+def progress_wrapper(progress_func):
+    def outter(*args, **kwargs):
+        @functools.wraps(progress_func)
+        def wrap():
+            return progress_func(*args, **kwargs)
+        return wrap
+    return outter
 
 
-def generate_cards(col, deck, text, options, main_dialog, progress_dialog):
+def generate_cards(col, deck, text, options, dialog):
     # Build the note types if needed
     build.build_asset(nord_basic_fl.model)
     build.build_asset(nord_basic_fl_reverse.model)
 
-    text = text.split('\n')
+    text = text.split('\n')    
 
-    reverse = False
-
-    # default translations number
-    translations = 2
-
-    # Get the source and destination language from the options if present
-    if options and options.get('language'):
-        dest = options.get('language').get('dest')
-        src  = options.get('language').get('src')
-
-    # Get the number of translations from the options if present
-    if options and options.get('translations'):
-        translations = options.get('translations')
-
-    if options and options.get('reverse'):
-        reverse = options.get('reverse')
-
-    if not col or type(col) is str:
-        # Open collection
-        col = Collection(col)
-
+    # Init collection handle
+    col = collection.init_handle(col)
+    
     # Retrieve deck id
     deck_id = collection.get_deck_id(col, deck.name)
 
+    # Get model name based on reverse option
+    if options.get('reverse'):
+        model_name = nord_basic_fl_reverse.model.name
+    else:
+        model_name = nord_basic_fl.model.name
+
     # Forward and reverse model version
     # Retrieve note model id
-    if reverse:
-        model_id = collection.get_model_id(col, nord_basic_fl_reverse.model.name)
-    else:
-        model_id = collection.get_model_id(col, nord_basic_fl.model.name)    
+    model_id = collection.get_model_id(col, model_name)
+
+    options['deck']  = { 'name': deck.name,  'id': deck_id }
+    options['model'] = { 'name': model_name, 'id': model_id }
                 
-    progress_f = progress_dialog.ui.updateProgress
+    progress = progress_wrapper(dialog['progress'].ui.updateProgress)
 
     # Trigger the card generation process in the background
-    # finish_f will be called when the process is finished
-    mw.taskman.run_in_background(process_words(col, deck, text, translations, reverse, src, dest, deck_id, model_id, progress_f),
-                                finish_f(main_dialog, progress_dialog))
+    # The finish handler will be called when the process is finished
+    mw.taskman.run_in_background(background_wrapper(process_words)(col, deck, text, options, progress),
+                                finish(dialog))
