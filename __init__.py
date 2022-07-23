@@ -57,7 +57,7 @@ def handle_accept(dialog_main):
         translations = dialog_main.ui.spinBox.value()
         options['translations'] = translations
 
-        generate_cards(collection, deck, text, options, dialog_main, dialog_progress)
+        generate_cards(collection, deck, text, options, { 'main': dialog_main, 'progress': dialog_progress })
         dialog_progress.exec_()
     
     return _f

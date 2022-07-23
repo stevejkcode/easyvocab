@@ -5,8 +5,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", "site-packages"))
 
 from googletrans import Translator
 
-
-
+# Helper to pull and format the foreign language explanation from the response object
+# Contains further details such as word type (noun, etc) as well as more detailed
+# definitions w/ examples 
 def pull_fl_explanation(extra_data, pos):
     definitions = extra_data.get('definitions')
 
@@ -32,6 +33,8 @@ def pull_fl_explanation(extra_data, pos):
     else:
         return [ '', '' ]
 
+# Pull and format the explanation for the user's target language 
+# Includes word type (noun, etc) as well as a list of synomyms.
 def pull_yl_explanation(extra_data, pos):
     all_translations = extra_data.get('all-translations')
 
@@ -47,7 +50,7 @@ def pull_yl_explanation(extra_data, pos):
         return [ '', '' ]
 
 
-# Helper function to translate a single word via google translate
+# Translate a single word via google translate
 # Returns the top translation along with up to numtrans alternatives if they are returned by google
 # Note this guy can't return grammatical gender :(
 def translate_word(word, numtrans, src='auto', dest='en'):

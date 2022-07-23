@@ -1,11 +1,9 @@
 # import anki
 
 import os
-import functools
 
 from anki.decks import DeckId
 from anki.media import media_paths_from_col_path
-from anki.notetypes_pb2 import ChangeNotetypeRequest
 
 from aqt import mw
 
@@ -14,45 +12,8 @@ from . import collection
 from .hash import get_media_hash
 from .translate import translate_word
 from .tts import generate_tts
+from . import util
 
-
-# Create cards for the notetype with the given question and answer
-def create_cards(collection, model_id, deck_id, card):
-    # Create card with original text + definition
-    note = collection.new_note(model_id)
-    note.fields = [
-        card['ForeignLanguageWord'],
-        card['YourLanguageDefinition'],
-        card['ForeignLanguagePronunciation'],
-        card['ForeignLanguageExplanationWordType_1'],
-        card['ForeignLanguageExplanationDetails_1'],
-        card['ForeignLanguageExplanationWordType_2'],
-        card['ForeignLanguageExplanationDetails_2'],
-        card['ForeignLanguageExplanationWordType_3'],
-        card['ForeignLanguageExplanationDetails_3'],
-        card['YourLanguageExplanationWordType_1'],
-        card['YourLanguageExplanationDetails_1'],
-        card['YourLanguageExplanationWordType_2'],
-        card['YourLanguageExplanationDetails_2'],
-        card['YourLanguageExplanationWordType_3'],
-        card['YourLanguageExplanationDetails_3']
-    ]
-
-    # Add card to deck
-    collection.add_note(note, deck_id)
-    return
-
-# Update the notetype of an existing basic card to a reverse card
-# This will add a reverse card to the existing forward card without
-# wiping out the stats of the forward card or needing to recreate it
-def update_basic_to_reverse(col, note_id):
-    old_model = col.models.by_name(nord_basic_fl.model.name)
-    new_model = col.models.by_name(nord_basic_fl_reverse.model.name)
-    
-    request = ChangeNotetypeRequest()
-    request.ParseFromString(col.models.change_notetype_info(old_notetype_id=old_model['id'], new_notetype_id=new_model['id']).input.SerializeToString())
-    request.note_ids.extend([ note_id ])
-    col.models.change_notetype_of_notes(request)
 
 # Process an individual word, creating cards for it as needed
 def process_word(col, deck, word, options, progress):
@@ -99,7 +60,7 @@ def process_word(col, deck, word, options, progress):
     # If reverse is enabled and a forward card already exists, change the notetype to reverse
     # to automatically generate a matching reverse card 
     if len(forward_dupes) > 0 and reverse:
-        update_basic_to_reverse(col, forward_dupes[0])
+        collection.update_basic_to_reverse(col, forward_dupes[0])
         return mw.taskman.run_on_main(progress)
 
     print(f'translating {question}')
@@ -147,7 +108,7 @@ def process_word(col, deck, word, options, progress):
     card['ForeignLanguagePronunciation'] = f'[sound:{media_filename}]'
 
     # generate final cards
-    create_cards(col, model_id, deck_id, card)
+    collection.create_cards(col, model_id, deck_id, card)
 
     return mw.taskman.run_on_main(progress)
 
@@ -161,16 +122,6 @@ def process_words(col, deck, words, options, progress):
         process_word(col, deck, word, options, progress(word, i + 1, count))
         i += 1
 
-# Decorator to run the task function with supplied args and kwargs
-# Needed because the function to run in the background must be a function with no args
-def background_wrapper(task):
-    def outter(*args, **kwargs):
-        @functools.wraps(task)
-        def inner():
-            return task(*args, **kwargs)
-        return inner
-    return outter
-
 # Simple callback function for closing out the overall background generation routine
 def finish(dialog):
     def wrap(future):
@@ -178,14 +129,6 @@ def finish(dialog):
         dialog['progress'].close()
         dialog['main'].close()
     return wrap
-
-def progress_wrapper(progress_func):
-    def outter(*args, **kwargs):
-        @functools.wraps(progress_func)
-        def wrap():
-            return progress_func(*args, **kwargs)
-        return wrap
-    return outter
 
 
 def generate_cards(col, deck, text, options, dialog):
@@ -214,9 +157,9 @@ def generate_cards(col, deck, text, options, dialog):
     options['deck']  = { 'name': deck.name,  'id': deck_id }
     options['model'] = { 'name': model_name, 'id': model_id }
                 
-    progress = progress_wrapper(dialog['progress'].ui.updateProgress)
+    progress = util.wrap_nonary(dialog['progress'].ui.updateProgress)
 
     # Trigger the card generation process in the background
     # The finish handler will be called when the process is finished
-    mw.taskman.run_in_background(background_wrapper(process_words)(col, deck, text, options, progress),
+    mw.taskman.run_in_background(util.wrap_nonary(process_words)(col, deck, text, options, progress),
                                 finish(dialog))
