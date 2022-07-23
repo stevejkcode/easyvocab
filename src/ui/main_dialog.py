@@ -19,10 +19,8 @@ from aqt.qt import *
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "site-packages"))
 import googletrans
 
-from . import file_select_dialog
-from .. import util
-from ..main import generate_cards
-from . import progress_dialog
+from . import file_select_dialog, progress_dialog
+from .. import util, generate
 
 
 class MainDialog(object):
@@ -204,7 +202,7 @@ class MainDialog(object):
         num_translations = self.spinBox.value()
         options['num_translations'] = num_translations
 
-        generate_cards(collection, deck, text, options, { 'main': Dialog, 'progress': progress })
+        generate.generate_cards(collection, deck, text, options, { 'main': Dialog, 'progress': progress })
         progress.exec_()
 
     # Custom dialog setup

@@ -107,7 +107,7 @@ def process_word(col, deck, word, options, progress):
     return mw.taskman.run_on_main(progress)
 
 # Outer function for running the card generation process
-# Note that this is run inside a background process in anki (hence the use of currying)
+# Note that this is run inside a background process in anki
 def process_words(col, deck, words, options, progress):
     count = len(words)
     i = 0
