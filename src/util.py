@@ -11,3 +11,6 @@ def wrap_nonary(func):
             return func(*args, **kwargs)
         return inner
     return outter
+
+# Capitalize language names
+def capitalize(name: str) -> str: return ' '.join([word.capitalize() for word in name.split(' ')])

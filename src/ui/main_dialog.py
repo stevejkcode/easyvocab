@@ -252,11 +252,4 @@ class MainDialog(object):
         languages = googletrans.LANGUAGES
 
         for language_code, language_name in languages.items():
-            comboBox.addItem(capitalize_name(language_name), language_code)
-
-
-# Helper functions
-
-# Capitalize language names
-def capitalize_name(name):
-    return ' '.join([word.capitalize() for word in name.split(' ')])
+            comboBox.addItem(util.capitalize(language_name), language_code)

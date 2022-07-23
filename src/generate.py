@@ -1,8 +1,5 @@
-# import anki
-
 import os
 
-from anki.decks import DeckId
 from anki.media import media_paths_from_col_path
 
 from aqt import mw
@@ -125,6 +122,7 @@ def finish(dialog):
     return wrap
 
 
+# Main card generation process
 def generate_cards(col, deck, text, options, dialog):
     # Build the note types if needed
     assets.build.build_asset(assets.nord_basic_fl.model)
