@@ -6,8 +6,9 @@ from aqt.utils import showInfo, qconnect
 from aqt.qt import *
 
 # Internal imports
-from .src.ui import main_dialog, progress_dialog
-from .src.main import generate_cards
+
+from .src.ui import main_dialog
+
 
 # We're going to add a menu item below. First we want to create a function to
 # be called when the menu item is activated.
@@ -17,50 +18,8 @@ def open_main_dialog() -> None:
     dialog.ui = main_dialog.MainDialog()
     dialog.ui.setupUi(dialog)
 
-    # Wire accept button to trigger generation process
-    dialog.ui.buttonBox.accepted.connect(handle_accept(dialog))
-
     # Trigger the dialog
     dialog.exec_()
-
-def create_progress_dialog() -> None:
-    dialog = QDialog()
-    dialog.ui = progress_dialog.ProgressDialog()
-    dialog.ui.setupUi(dialog)
-
-    return dialog
-
-# Helper function to trigger the card generation process when the accept button is clicked
-# Retrieves options from the UI and forwards them along with the list of words to the process 
-def handle_accept(dialog_main):
-    def _f():
-        dialog_progress = create_progress_dialog()
-
-        text       = dialog_main.ui.textEdit.toPlainText()
-        collection = mw.col
-
-        options = {}
-
-        # Get the target deck from the dialog_main
-        deck = dialog_main.ui.comboBox.currentData()
-
-        # Get the language settings from the dialog_main
-        src  = dialog_main.ui.comboBox_2.currentData()
-        dest = dialog_main.ui.comboBox_3.currentData()
-        options['language'] = {'src': src, 'dest': dest}
-
-        # Get the reverse setting from the dialog_main
-        reverse = dialog_main.ui.radioButton.isChecked()
-        options['reverse'] = reverse
-
-        # Get the number of translations to include
-        num_translations = dialog_main.ui.spinBox.value()
-        options['num_translations'] = num_translations
-
-        generate_cards(collection, deck, text, options, { 'main': dialog_main, 'progress': dialog_progress })
-        dialog_progress.exec_()
-    
-    return _f
 
 
 # create a new menu item, "Generate Foreign Language Cards"
