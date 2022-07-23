@@ -54,8 +54,8 @@ def handle_accept(dialog_main):
         options['reverse'] = reverse
 
         # Get the number of translations to include
-        translations = dialog_main.ui.spinBox.value()
-        options['translations'] = translations
+        num_translations = dialog_main.ui.spinBox.value()
+        options['num_translations'] = num_translations
 
         generate_cards(collection, deck, text, options, { 'main': dialog_main, 'progress': dialog_progress })
         dialog_progress.exec_()

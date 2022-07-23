@@ -7,13 +7,7 @@ from anki.media import media_paths_from_col_path
 
 from aqt import mw
 
-from .assets import build, nord_basic_fl, nord_basic_fl_reverse
-from . import collection
-from .hash import get_media_hash
-from .translate import translate_word
-from .tts import generate_tts
-from . import util
-
+from . import assets, collection, hash, translate, tts, util
 
 # Process an individual word, creating cards for it as needed
 def process_word(col, deck, word, options, progress):
@@ -66,7 +60,7 @@ def process_word(col, deck, word, options, progress):
     print(f'translating {question}')
 
     # Translate
-    translations = translate_word(question, num_translations, src, dest)
+    translations = translate.translate_word(question, num_translations, src, dest)
 
     translation = translations[0]
     answer = ', '.join(translation)
@@ -90,24 +84,24 @@ def process_word(col, deck, word, options, progress):
     }
 
     # Generate text-to-speech
-    # create media filename
-    media_hash = get_media_hash(question)
+    # Create media filename
+    media_hash = hash.get_media_hash(question)
     media_filename = f'{media_hash}.mp3'
 
-    # get the media location
+    # Get the media location
     [ media_dir, _ ] = media_paths_from_col_path(col.path)
 
-    # call tts to create the audio
-    tts = generate_tts(question, lang=src)
+    # Call tts to create the audio
+    speach = tts.generate_tts(question, lang=src)
 
-    # save generated tts to the media dir
+    # Save generated tts to the media dir
     media_full_path = os.path.join(media_dir, media_filename)
-    tts.save(media_full_path)
+    speach.save(media_full_path)
 
-    # place media in the resulting card
+    # Place media in the resulting card
     card['ForeignLanguagePronunciation'] = f'[sound:{media_filename}]'
 
-    # generate final cards
+    # Generate final cards
     collection.create_cards(col, model_id, deck_id, card)
 
     return mw.taskman.run_on_main(progress)
@@ -133,8 +127,8 @@ def finish(dialog):
 
 def generate_cards(col, deck, text, options, dialog):
     # Build the note types if needed
-    build.build_asset(nord_basic_fl.model)
-    build.build_asset(nord_basic_fl_reverse.model)
+    assets.build.build_asset(assets.nord_basic_fl.model)
+    assets.build.build_asset(assets.nord_basic_fl_reverse.model)
 
     text = text.split('\n')    
 
@@ -146,9 +140,9 @@ def generate_cards(col, deck, text, options, dialog):
 
     # Get model name based on reverse option
     if options.get('reverse'):
-        model_name = nord_basic_fl_reverse.model.name
+        model_name = assets.nord_basic_fl_reverse.model.name
     else:
-        model_name = nord_basic_fl.model.name
+        model_name = assets.nord_basic_fl.model.name
 
     # Forward and reverse model version
     # Retrieve note model id
