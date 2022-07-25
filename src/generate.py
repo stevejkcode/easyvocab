@@ -117,6 +117,9 @@ def process_word(col, deck, word, options, progress):
     # Generate final cards
     collection.create_cards(col, model_id, deck_id, card)
 
+    # Save and flush any outstanding db changes in case the process gets interrupted
+    collection.save(col)
+
     return mw.taskman.run_on_main(progress)
 
 # Outer function for running the card generation process

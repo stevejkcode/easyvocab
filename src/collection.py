@@ -6,6 +6,8 @@ from .assets import nord_basic_fl, nord_basic_fl_reverse
 
 # Functions for interacting with anki collections
 
+# Queries
+
 # Retrieve model id
 def get_model_id(col: Collection, name: str) -> str:
     return col.models.id_for_name(name)
@@ -46,6 +48,9 @@ def create_cards(collection, model_id, deck_id, card):
     collection.add_note(note, deck_id)
     return
 
+
+# Updates
+
 # Curried method for changing note type
 # Used to build the basic to reverse function below
 def change_note_type(old_model_name, new_model_name):
@@ -65,6 +70,14 @@ def change_note_type(old_model_name, new_model_name):
 # wiping out the stats of the forward card or needing to recreate it
 update_basic_to_reverse = change_note_type(nord_basic_fl.model.name, nord_basic_fl_reverse.model.name)
     
+
+# Saving
+
+def save(col): return col.save()
+
+
+# Initialization
+
 # Initialize a collection handle if necessary
 # If col is a string use it to get a collection handle, otherwise return the 
 # already open collection handle
