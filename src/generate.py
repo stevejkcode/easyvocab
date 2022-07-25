@@ -6,6 +6,31 @@ from aqt import mw
 
 from . import assets, collection, hash, translate, tts, util
 
+
+# Process and save the tts if possible
+def process_tts(col, question, card):
+    # Generate text-to-speech
+    # Create media filename
+    media_hash = hash.get_media_hash(question)
+    media_filename = f'{media_hash}.mp3'
+
+    # Get the media location
+    [ media_dir, _ ] = media_paths_from_col_path(col.path)
+
+    # Autodetect the source lane if not specified
+    detect = translate.detect_lang(question)
+    src    = detect['lang']
+
+    # Call tts to create the audio
+    speach = tts.generate_tts(question, lang=src)
+
+    # Save generated tts to the media dir
+    media_full_path = os.path.join(media_dir, media_filename)
+    speach.save(media_full_path)
+
+    # Place media in the resulting card
+    card['ForeignLanguagePronunciation'] = f'[sound:{media_filename}]'
+
 # Process an individual word, creating cards for it as needed
 def process_word(col, deck, word, options, progress):
     # default values
@@ -80,27 +105,9 @@ def process_word(col, deck, word, options, progress):
         'YourLanguageExplanationDetails_3': translations[12]
     }
 
-    # Generate text-to-speech
-    # Create media filename
-    media_hash = hash.get_media_hash(question)
-    media_filename = f'{media_hash}.mp3'
-
-    # Get the media location
-    [ media_dir, _ ] = media_paths_from_col_path(col.path)
-
-    # Autodetect the source lane if not specified
-    detect = translate.detect_lang(question)
-    src    = detect['lang']
-
-    # Call tts to create the audio
-    speach = tts.generate_tts(question, lang=src)
-
-    # Save generated tts to the media dir
-    media_full_path = os.path.join(media_dir, media_filename)
-    speach.save(media_full_path)
-
-    # Place media in the resulting card
-    card['ForeignLanguagePronunciation'] = f'[sound:{media_filename}]'
+    try:
+        process_tts(col, question, card)
+    except: print(f'warning - failed to generate tts for {question}')
 
     # Generate final cards
     collection.create_cards(col, model_id, deck_id, card)
