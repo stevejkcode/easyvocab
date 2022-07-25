@@ -65,19 +65,22 @@ def process_word(col, deck, word, options, progress):
 
     ## Filter for dupes
     # Find duplicate cards
-    forward_dupes = collection.find_dupes(col, deck.name, 'ForeignLanguageWord', question)
-    reverse_dupes = collection.find_dupes(col, deck.name, 'YourLanguageDefinition', question)
+    dupes = collection.find_dupes(col, deck.name, 'ForeignLanguageWord', question)
 
-    # If there are duplicate cards, continue rather than adding this card to the deck 
-    if len(forward_dupes) > 0 and len(reverse_dupes) > 0: return mw.taskman.run_on_main(progress)
+    # Handle duplicate notes / cards
+    if len(dupes) > 0:
+        dupe = dupes[0]
 
-    # If reverse is false, skip the process if there are forward duplicate cards
-    if len(forward_dupes) > 0 and not reverse: return mw.taskman.run_on_main(progress)
+        # Retrieve note and notetype information
+        note     = col.get_note(dupe)
+        notetype = note.note_type()
 
-    # If reverse is enabled and a forward card already exists, change the notetype to reverse
-    # to automatically generate a matching reverse card 
-    if len(forward_dupes) > 0 and reverse:
-        collection.update_basic_to_reverse(col, forward_dupes[0])
+        # If reverse cards are enabled and note type is forward only, update the notetype to generate a reverse card
+        if notetype['name'] == assets.nord_basic_fl.model.name and reverse:
+            collection.update_basic_to_reverse(col, dupe)
+            return mw.taskman.run_on_main(progress)
+        
+        # Otherwise, skip creating this card because one already exists in this deck
         return mw.taskman.run_on_main(progress)
 
     print(f'translating {question}')

@@ -46,18 +46,25 @@ def create_cards(collection, model_id, deck_id, card):
     collection.add_note(note, deck_id)
     return
 
+# Curried method for changing note type
+# Used to build the basic to reverse function below
+def change_note_type(old_model_name, new_model_name):
+    def wrap(col, note_id):
+        old_model = col.models.by_name(old_model_name)
+        new_model = col.models.by_name(new_model_name)
+
+        request = ChangeNotetypeRequest()
+        request.ParseFromString(col.models.change_notetype_info(old_notetype_id=old_model['id'], new_notetype_id=new_model['id']).input.SerializeToString())
+        request.note_ids.extend([ note_id ])
+        return col.models.change_notetype_of_notes(request)
+
+    return wrap
+
 # Update the notetype of an existing basic card to a reverse card
 # This will add a reverse card to the existing forward card without
 # wiping out the stats of the forward card or needing to recreate it
-def update_basic_to_reverse(col, note_id):
-    old_model = col.models.by_name(nord_basic_fl.model.name)
-    new_model = col.models.by_name(nord_basic_fl_reverse.model.name)
+update_basic_to_reverse = change_note_type(nord_basic_fl.model.name, nord_basic_fl_reverse.model.name)
     
-    request = ChangeNotetypeRequest()
-    request.ParseFromString(col.models.change_notetype_info(old_notetype_id=old_model['id'], new_notetype_id=new_model['id']).input.SerializeToString())
-    request.note_ids.extend([ note_id ])
-    col.models.change_notetype_of_notes(request)
-
 # Initialize a collection handle if necessary
 # If col is a string use it to get a collection handle, otherwise return the 
 # already open collection handle
