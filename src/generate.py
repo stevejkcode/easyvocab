@@ -8,7 +8,7 @@ from . import assets, collection, hash, translate, tts, util
 
 
 # Process and save the tts if possible
-def process_tts(col, question, card):
+def process_tts(col, question, src, card):
     # Generate text-to-speech
     # Create media filename
     media_hash = hash.get_media_hash(question)
@@ -18,8 +18,9 @@ def process_tts(col, question, card):
     [ media_dir, _ ] = media_paths_from_col_path(col.path)
 
     # Autodetect the source lane if not specified
-    detect = translate.detect_lang(question)
-    src    = detect['lang']
+    if src is None or src == '':
+        detect = translate.detect_lang(question)
+        src    = detect['lang']
 
     # Call tts to create the audio
     speach = tts.generate_tts(question, lang=src)
@@ -107,7 +108,7 @@ def process_word(col, deck, word, options, progress):
 
     # Attempt to generate a tts, skipping if there is a problem with the generation
     try:
-        process_tts(col, question, card)
+        process_tts(col, question, src, card)
     except: print(f'warning - failed to generate tts for {question}')
 
     # Generate final cards
