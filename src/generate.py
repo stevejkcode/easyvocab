@@ -138,6 +138,9 @@ def finish(dialog):
         print(f'finished with result: {future.result()}')
         dialog['progress'].close()
         dialog['main'].close()
+
+        # Refresh the deck browser so any newly generated cards / decks will appear
+        mw.deckBrowser.refresh()
     return wrap
 
 
