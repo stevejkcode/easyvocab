@@ -105,6 +105,7 @@ def process_word(col, deck, word, options, progress):
         'YourLanguageExplanationDetails_3': translations[12]
     }
 
+    # Attempt to generate a tts, skipping if there is a problem with the generation
     try:
         process_tts(col, question, card)
     except: print(f'warning - failed to generate tts for {question}')

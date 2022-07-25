@@ -1,7 +1,7 @@
 import os
 import sys
 
-name = 'prettify-nord-basic-fl'
+name = 'Prettify Vocabulary Card'
 
 with open(os.path.join(os.path.dirname(__file__), './afmt.html'), 'r') as html:
     afmt = html.read()
@@ -32,7 +32,7 @@ fields = [
 
 templates = [
     {
-        'name': 'ForwardTemplate',
+        'name': 'Vocabulary Card',
         'afmt': afmt,
         'qfmt': qfmt
     }
