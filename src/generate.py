@@ -88,6 +88,10 @@ def process_word(col, deck, word, options, progress):
     # Get the media location
     [ media_dir, _ ] = media_paths_from_col_path(col.path)
 
+    # Autodetect the source lane if not specified
+    detect = translate.detect_lang(question)
+    src    = detect['lang']
+
     # Call tts to create the audio
     speach = tts.generate_tts(question, lang=src)
 
@@ -128,7 +132,7 @@ def generate_cards(col, deck, text, options, dialog):
     assets.build.build_asset(assets.nord_basic_fl.model)
     assets.build.build_asset(assets.nord_basic_fl_reverse.model)
 
-    text = text.split('\n')    
+    text = text.split('\n')
 
     # Init collection handle
     col = collection.init_handle(col)

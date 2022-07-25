@@ -5,6 +5,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", "site-packages"))
 
 from googletrans import Translator
 
+# Pull global static translator object to prevent continuous re-initializing
+translator = Translator()
+
 # Helper to pull and format the foreign language explanation from the response object
 # Contains further details such as word type (noun, etc) as well as more detailed
 # definitions w/ examples 
@@ -61,7 +64,7 @@ def translate_word(word, numtrans, src='auto', dest='en'):
     if numtrans is None or numtrans < 1:
         numtrans = 1
 
-    translator = Translator()
+    # translator = Translator()
     translation_response = translator.translate(word, dest, src)
 
     extra_data = translation_response.extra_data
@@ -107,3 +110,18 @@ def translate_word(word, numtrans, src='auto', dest='en'):
         your_language_explanation_word_type_3,
         your_language_explanation_details_3
     ]
+
+# Auto detect source lang
+def detect_lang(word): 
+    detect = translator.detect(word)
+
+    lang       = detect.lang
+    confidence = detect.confidence
+
+    # If there's more than one lang, take only the first for simplicity
+    if lang and type(lang) is list:
+        lang = detect.lang[0]
+    if confidence and type(confidence) is list:
+        confidence = confidence[0]
+
+    return { "lang": lang, "confidence": confidence }
