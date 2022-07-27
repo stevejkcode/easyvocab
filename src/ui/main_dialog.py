@@ -16,6 +16,8 @@ import codecs
 from aqt import mw
 from aqt.qt import *
 
+from PyQt5 import QtCore, QtGui, QtWidgets
+
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "site-packages"))
 import googletrans
 
@@ -25,138 +27,104 @@ from .. import util, generate
 
 class MainDialog(object):
     def setupUi(self, Dialog):
-       if not Dialog.objectName():
-        Dialog.setObjectName(u"Dialog")
-        Dialog.resize(514, 473)
-        self.groupBox = QGroupBox(Dialog)
-        self.groupBox.setObjectName(u"groupBox")
-        self.groupBox.setGeometry(QRect(0, 0, 511, 471))
-        self.buttonBox = QDialogButtonBox(self.groupBox)
-        self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setGeometry(QRect(165, 440, 166, 25))
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
-        self.widget = QWidget(self.groupBox)
-        self.widget.setObjectName(u"widget")
-        self.widget.setGeometry(QRect(61, 11, 386, 397))
-        self.gridLayout = QGridLayout(self.widget)
-        self.gridLayout.setObjectName(u"gridLayout")
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
-        self.textEdit = QTextEdit(self.widget)
-        self.textEdit.setObjectName(u"textEdit")
-
-        self.gridLayout.addWidget(self.textEdit, 0, 0, 1, 5)
-
-        self.pushButton = QPushButton(self.widget)
-        self.pushButton.setObjectName(u"pushButton")
-
-        self.gridLayout.addWidget(self.pushButton, 1, 0, 1, 2)
-
-        self.horizontalSpacer = QSpacerItem(228, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.gridLayout.addItem(self.horizontalSpacer, 1, 2, 1, 3)
-
-        self.horizontalSpacer_4 = QSpacerItem(328, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.gridLayout.addItem(self.horizontalSpacer_4, 2, 0, 2, 5)
-
-        self.horizontalSpacer_5 = QSpacerItem(68, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.gridLayout.addItem(self.horizontalSpacer_5, 3, 2, 2, 2)
-
-        self.label_3 = QLabel(self.widget)
-        self.label_3.setObjectName(u"label_3")
-
-        self.gridLayout.addWidget(self.label_3, 4, 0, 1, 2)
-
-        self.label_4 = QLabel(self.widget)
-        self.label_4.setObjectName(u"label_4")
-
-        self.gridLayout.addWidget(self.label_4, 4, 2, 1, 4)
-
-        self.comboBox_2 = QComboBox(self.widget)
-        self.comboBox_2.setObjectName(u"comboBox_2")
-
-        self.gridLayout.addWidget(self.comboBox_2, 5, 0, 1, 2)
-
-        self.comboBox_3 = QComboBox(self.widget)
-        self.comboBox_3.setObjectName(u"comboBox_3")
-
-        self.gridLayout.addWidget(self.comboBox_3, 5, 2, 1, 4)
-
-        self.comboBox = QComboBox(self.widget)
-        self.comboBox.setObjectName(u"comboBox")
-
-        self.gridLayout.addWidget(self.comboBox, 6, 0, 1, 3)
-
-        self.label = QLabel(self.widget)
-        self.label.setObjectName(u"label")
-
-        self.gridLayout.addWidget(self.label, 6, 3, 1, 1)
-
-        self.horizontalSpacer_2 = QSpacerItem(138, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.gridLayout.addItem(self.horizontalSpacer_2, 6, 4, 1, 1)
-
-        self.radioButton = QRadioButton(self.widget)
-        self.radioButton.setObjectName(u"radioButton")
-
-        self.gridLayout.addWidget(self.radioButton, 7, 0, 1, 3)
-
-        self.horizontalSpacer_3 = QSpacerItem(178, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.gridLayout.addItem(self.horizontalSpacer_3, 7, 3, 1, 2)
-
-        self.spinBox = QSpinBox(self.widget)
-        self.spinBox.setObjectName(u"spinBox")
-        self.spinBox.setValue(2)
-
+        Dialog.setObjectName("Dialog")
+        Dialog.resize(411, 550)
+        Dialog.setAutoFillBackground(True)
+        Dialog.setSizeGripEnabled(True)
+        Dialog.setModal(True)
+        self.layoutWidget = QtWidgets.QWidget(Dialog)
+        self.layoutWidget.setGeometry(QtCore.QRect(12, 12, 388, 527))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.gridLayout = QtWidgets.QGridLayout()
+        self.gridLayout.setObjectName("gridLayout")
+        self.textEdit = QtWidgets.QTextEdit(self.layoutWidget)
+        self.textEdit.setObjectName("textEdit")
+        self.gridLayout.addWidget(self.textEdit, 0, 0, 1, 4)
+        self.pushButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.pushButton.setObjectName("pushButton")
+        self.gridLayout.addWidget(self.pushButton, 1, 0, 1, 1)
+        spacerItem = QtWidgets.QSpacerItem(188, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem, 1, 1, 1, 3)
+        spacerItem1 = QtWidgets.QSpacerItem(328, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem1, 2, 0, 1, 4)
+        self.label_3 = QtWidgets.QLabel(self.layoutWidget)
+        self.label_3.setObjectName("label_3")
+        self.gridLayout.addWidget(self.label_3, 3, 0, 1, 1)
+        self.label_4 = QtWidgets.QLabel(self.layoutWidget)
+        self.label_4.setObjectName("label_4")
+        self.gridLayout.addWidget(self.label_4, 3, 2, 1, 2)
+        self.comboBox_3 = QtWidgets.QComboBox(self.layoutWidget)
+        self.comboBox_3.setObjectName("comboBox_3")
+        self.gridLayout.addWidget(self.comboBox_3, 4, 2, 1, 2)
+        self.label = QtWidgets.QLabel(self.layoutWidget)
+        self.label.setObjectName("label")
+        self.gridLayout.addWidget(self.label, 5, 2, 1, 1)
+        spacerItem2 = QtWidgets.QSpacerItem(48, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem2, 5, 3, 1, 1)
+        spacerItem3 = QtWidgets.QSpacerItem(138, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem3, 6, 2, 1, 2)
+        spacerItem4 = QtWidgets.QSpacerItem(138, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem4, 7, 2, 1, 2)
+        self.spinBox = QtWidgets.QSpinBox(self.layoutWidget)
+        self.spinBox.setProperty("value", 2)
+        self.spinBox.setObjectName("spinBox")
         self.gridLayout.addWidget(self.spinBox, 8, 0, 1, 1)
-
-        self.label_2 = QLabel(self.widget)
-        self.label_2.setObjectName(u"label_2")
-
-        self.gridLayout.addWidget(self.label_2, 8, 1, 1, 4)
-
+        self.label_2 = QtWidgets.QLabel(self.layoutWidget)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout.addWidget(self.label_2, 8, 1, 1, 3)
+        self.comboBox_2 = QtWidgets.QComboBox(self.layoutWidget)
+        self.comboBox_2.setObjectName("comboBox_2")
+        self.gridLayout.addWidget(self.comboBox_2, 4, 0, 1, 2)
+        self.comboBox = QtWidgets.QComboBox(self.layoutWidget)
+        self.comboBox.setStatusTip("")
+        self.comboBox.setCurrentText("")
+        self.comboBox.setObjectName("comboBox")
+        self.gridLayout.addWidget(self.comboBox, 5, 0, 1, 2)
+        self.checkBox = QtWidgets.QCheckBox(self.layoutWidget)
+        self.checkBox.setObjectName("checkBox")
+        self.gridLayout.addWidget(self.checkBox, 6, 0, 1, 2)
+        self.checkBox_2 = QtWidgets.QCheckBox(self.layoutWidget)
+        self.checkBox_2.setChecked(True)
+        self.checkBox_2.setObjectName("checkBox_2")
+        self.gridLayout.addWidget(self.checkBox_2, 7, 0, 1, 2)
+        self.verticalLayout.addLayout(self.gridLayout)
+        self.buttonBox = QtWidgets.QDialogButtonBox(self.layoutWidget)
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setCenterButtons(True)
+        self.buttonBox.setObjectName("buttonBox")
+        self.verticalLayout.addWidget(self.buttonBox)
 
         self.retranslateUi(Dialog)
-        self.buttonBox.rejected.connect(Dialog.reject)
-
-        QMetaObject.connectSlotsByName(Dialog)
+        self.buttonBox.accepted.connect(Dialog.accept) # type: ignore
+        self.buttonBox.rejected.connect(Dialog.reject) # type: ignore
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
 
         # perform final setup actions
         # note that these are actions outside of the ones auto generated by QtDesigner
         self.customSetup(Dialog)
-    # setupUi
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Generate Foreign Language Cards", None))
-        self.groupBox.setTitle("")
-        self.textEdit.setPlaceholderText(QCoreApplication.translate("Dialog", u"Enter words...", None))
-#if QT_CONFIG(tooltip)
-        self.pushButton.setToolTip(QCoreApplication.translate("Dialog", u"<html><head/><body><p>Import words file</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton.setText(QCoreApplication.translate("Dialog", u"Select file...", None))
-        self.label_3.setText(QCoreApplication.translate("Dialog", u"Source Language", None))
-        self.label_4.setText(QCoreApplication.translate("Dialog", u"Target Language", None))
-#if QT_CONFIG(tooltip)
-        self.comboBox.setToolTip(QCoreApplication.translate("Dialog", u"<html><head/><body><p>Choose or create a deck to import words into</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(statustip)
-        self.comboBox.setStatusTip("")
-#endif // QT_CONFIG(statustip)
-        self.comboBox.setCurrentText("")
-        self.comboBox.setPlaceholderText(QCoreApplication.translate("Dialog", u"Deck", None))
-        self.label.setText(QCoreApplication.translate("Dialog", u"Deck", None))
-#if QT_CONFIG(tooltip)
-        self.radioButton.setToolTip(QCoreApplication.translate("Dialog", u"<html><head/><body><p>Create reverse vocab cards in addition to normal ones.</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.radioButton.setText(QCoreApplication.translate("Dialog", u"Create reverse cards", None))
-#if QT_CONFIG(tooltip)
-        self.spinBox.setToolTip(QCoreApplication.translate("Dialog", u"<html><head/><body><p>The default number of translations to use on the reverse side of each card</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.label_2.setText(QCoreApplication.translate("Dialog", u"Default number of translations", None))
-    # retranslateUi
+        _translate = QtCore.QCoreApplication.translate
+        Dialog.setWindowTitle(_translate("Dialog", "Generate Foreign Language Cards"))
+        self.textEdit.setPlaceholderText(_translate("Dialog", "Enter words..."))
+        self.pushButton.setToolTip(_translate("Dialog", "<html><head/><body><p>Import words file</p></body></html>"))
+        self.pushButton.setText(_translate("Dialog", "Select file..."))
+        self.label_3.setText(_translate("Dialog", "Source Language"))
+        self.label_4.setText(_translate("Dialog", "Target Language"))
+        self.label.setText(_translate("Dialog", "Deck"))
+        self.spinBox.setToolTip(_translate("Dialog", "<html><head/><body><p>The default number of translations to use on the reverse side of each card</p></body></html>"))
+        self.label_2.setText(_translate("Dialog", "Default number of translations"))
+        self.comboBox.setToolTip(_translate("Dialog", "<html><head/><body><p>Choose which deck to import the generated cards into.</p></body></html>"))
+        self.comboBox.setPlaceholderText(_translate("Dialog", "Deck"))
+        self.checkBox.setToolTip(_translate("Dialog", "<html><head/><body><p>Create reverse vocab cards in addition to normal ones.</p></body></html>"))
+        self.checkBox.setText(_translate("Dialog", "Create reverse cards"))
+        self.checkBox_2.setToolTip(_translate("Dialog", "Enable text to speech. Google TTS will be used to generate audio for your cards."))
+        self.checkBox_2.setText(_translate("Dialog", "Enable text-to-speech"))
+
 
 
     # Custom functions
@@ -189,14 +157,18 @@ class MainDialog(object):
         # Get the target deck from the main dialog
         deck = self.comboBox.currentData()
 
-        # Get the language settings from the self
+        # Get the language settings from the combo boxes
         src  = self.comboBox_2.currentData()
         dest = self.comboBox_3.currentData()
         options['language'] = {'src': src, 'dest': dest}
 
         # Get the reverse setting from the main dialog
-        reverse = self.radioButton.isChecked()
+        reverse = self.checkBox.isChecked()
         options['reverse'] = reverse
+
+        # Get the tts setting from the main dialog
+        tts = self.checkBox_2.isChecked()
+        options['tts'] = tts
 
         # Get the number of translations to include
         num_translations = self.spinBox.value()
