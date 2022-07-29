@@ -1,5 +1,5 @@
 ## anki-card-builder
-<img src="screen1.png" with=285 height=400></img><img src="screen2.png" width=306 width=400></img><img src="screen3.png" width=306 height=400></img>
+<img src="screen1.png" with=249 height=350></img><img src="screen2.png" width=306 width=400></img><img src="screen3.png" width=306 height=400></img>
 
 Quick and easy foreign vocabularly card generation for `anki`.
 
