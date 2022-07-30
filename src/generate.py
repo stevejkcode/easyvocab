@@ -2,6 +2,7 @@ import os
 
 from anki.media import media_paths_from_col_path
 
+from PyQt5 import QtWidgets
 from aqt import mw
 
 from . import assets, collection, hash, translate, tts, util
@@ -158,6 +159,7 @@ def finish(dialogs, col):
 # wires buttons in the progress dialog so 
 def wire_buttons(dialogs, col):
     def wrap(future):
+        dialogs['progress'].ui.buttonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Ok).setDisabled(False)
         dialogs['progress'].ui.buttonBox.accepted.connect(finish(dialogs, col))
 
     return wrap
