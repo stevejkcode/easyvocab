@@ -31,7 +31,7 @@ class MainDialog(object):
         Dialog.resize(411, 550)
         Dialog.setAutoFillBackground(True)
         Dialog.setSizeGripEnabled(True)
-        Dialog.setModal(True)
+        Dialog.setModal(False)
         self.layoutWidget = QtWidgets.QWidget(Dialog)
         self.layoutWidget.setGeometry(QtCore.QRect(12, 12, 388, 527))
         self.layoutWidget.setObjectName("layoutWidget")
@@ -99,7 +99,7 @@ class MainDialog(object):
         self.verticalLayout.addWidget(self.buttonBox)
 
         self.retranslateUi(Dialog)
-        self.buttonBox.accepted.connect(Dialog.accept) # type: ignore
+        # self.buttonBox.accepted.connect(Dialog.accept) # type: ignore
         self.buttonBox.rejected.connect(Dialog.reject) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -124,7 +124,6 @@ class MainDialog(object):
         self.checkBox.setText(_translate("Dialog", "Create reverse cards"))
         self.checkBox_2.setToolTip(_translate("Dialog", "Enable text to speech. Google TTS will be used to generate audio for your cards."))
         self.checkBox_2.setText(_translate("Dialog", "Enable text-to-speech"))
-
 
 
     # Custom functions
