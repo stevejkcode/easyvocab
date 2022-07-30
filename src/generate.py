@@ -118,35 +118,53 @@ def process_word(col, deck, word, options, progress):
     # Generate final cards
     collection.create_cards(col, model_id, deck_id, card)
 
-    # Save and flush any outstanding db changes in case the process gets interrupted
-    collection.save(col)
-
-    return mw.taskman.run_on_main(progress)
+    mw.taskman.run_on_main(progress)
+    return True
 
 # Outer function for running the card generation process
 # Note that this is run inside a background process in anki
-def process_words(col, deck, words, options, progress):
-    count = len(words)
+def process_words(col, deck, words, options, progress, dialogs):
+    total = len(words)
+
     i = 0
+    translated = 0
 
     for word in words:
-        process_word(col, deck, word, options, progress(word, i + 1, count))
+        if process_word(col, deck, word, options, progress(word, i + 1, total)): translated += 1
         i += 1
+    
+    def update():
+        dialogs['progress'].ui.textBrowser.append('\n')
+        dialogs['progress'].ui.textBrowser.append(f'generated {translated} cards.')
+    
+    mw.taskman.run_on_main(update)
 
-# Simple callback function for closing out the overall background generation routine
-def finish(dialog):
-    def wrap(future):
-        print(f'finished with result: {future.result()}')
-        dialog['progress'].close()
-        dialog['main'].close()
+def finish(dialogs, col):
+    def wrap():
+        # Save and flush any outstanding db changes in case the process gets interrupted
+        collection.save(col)
+
+        dialogs['progress'].close()
+        dialogs['main'].close()
 
         # Refresh the deck browser so any newly generated cards / decks will appear
         mw.deckBrowser.refresh()
+
+        return
+    
+    return wrap
+
+# Simple callback function for closing out the overall background generation routine
+# wires buttons in the progress dialog so 
+def wire_buttons(dialogs, col):
+    def wrap(future):
+        dialogs['progress'].ui.buttonBox.accepted.connect(finish(dialogs, col))
+
     return wrap
 
 
 # Main card generation process
-def generate_cards(col, deck, text, options, dialog):
+def generate_cards(col, deck, text, options, dialogs):
     # Build the note types if needed
     assets.build.build_asset(assets.nord_basic_fl.model)
     assets.build.build_asset(assets.nord_basic_fl_reverse.model)
@@ -172,9 +190,9 @@ def generate_cards(col, deck, text, options, dialog):
     options['deck']  = { 'name': deck.name,  'id': deck_id }
     options['model'] = { 'name': model_name, 'id': model_id }
                 
-    progress = util.wrap_nonary(dialog['progress'].ui.updateProgress)
+    progress = util.wrap_nonary(dialogs['progress'].ui.updateProgress)
 
     # Trigger the card generation process in the background
     # The finish handler will be called when the process is finished
-    mw.taskman.run_in_background(util.wrap_nonary(process_words)(col, deck, text, options, progress),
-                                finish(dialog))
+    mw.taskman.run_in_background(util.wrap_nonary(process_words)(col, deck, text, options, progress, dialogs),
+                                wire_buttons(dialogs, col))
