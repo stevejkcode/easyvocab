@@ -84,7 +84,7 @@ def process_word(col, deck, word, options, progress):
         # Otherwise, skip creating this card because one already exists in this deck
         return mw.taskman.run_on_main(progress)
 
-    print(f'translating {question}')
+    # print(f'translating {question}')
 
     # Translate
     translations = translate.translate_word(question, num_translations, src, dest)
@@ -114,7 +114,7 @@ def process_word(col, deck, word, options, progress):
         # Attempt to generate a tts, skipping if there is a problem with the generation
         try:
             process_tts(col, question, src, card)
-        except: print(f'warning - failed to generate tts for {question}')
+        except: print(f'Warning - failed to generate tts for {question}')
 
     # Generate final cards
     collection.create_cards(col, model_id, deck_id, card)
@@ -136,7 +136,7 @@ def process_words(col, deck, words, options, progress, dialogs):
     
     def update():
         dialogs['progress'].ui.textBrowser.append('\n')
-        dialogs['progress'].ui.textBrowser.append(f'generated {translated} cards.')
+        dialogs['progress'].ui.textBrowser.append(f'Generated {translated} cards.')
     
     mw.taskman.run_on_main(update)
 
@@ -153,6 +153,18 @@ def finish(dialogs, col):
 
         return
     
+    return wrap
+
+# Cancel running card generation and close out UI elements
+def cancel(dialogs, future):
+    def wrap():
+        # Cancel the future to stop card generation
+        future.cancel()
+
+        # Close UI elements, return user to previous view
+        dialogs['progress'].close()
+        dialogs['main'].close()
+
     return wrap
 
 # Simple callback function for closing out the overall background generation routine
@@ -185,7 +197,6 @@ def generate_cards(col, deck, text, options, dialogs):
     else:
         model_name = assets.nord_basic_fl.model.name
 
-    # Forward and reverse model version
     # Retrieve note model id
     model_id = collection.get_model_id(col, model_name)
 
@@ -196,5 +207,8 @@ def generate_cards(col, deck, text, options, dialogs):
 
     # Trigger the card generation process in the background
     # The finish handler will be called when the process is finished
-    mw.taskman.run_in_background(util.wrap_nonary(process_words)(col, deck, text, options, progress, dialogs),
+    future = mw.taskman.run_in_background(util.wrap_nonary(process_words)(col, deck, text, options, progress, dialogs),
                                 wire_buttons(dialogs, col))
+
+    # Set up cancel button to cancel card generation
+    dialogs['progress'].ui.buttonBox.rejected.connect(cancel(dialogs, future))

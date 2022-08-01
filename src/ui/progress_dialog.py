@@ -53,7 +53,7 @@ class ProgressDialog(object):
         Dialog.setWindowTitle(_translate("Dialog", "Generating Cards..."))
 
     def updateProgress(self, word, current, total):
-        self.textBrowser.append(f'finished: {word}')
+        self.textBrowser.append(f'Translated {word}')
 
         percent = math.floor((current / total) * 100)
         self.progressBar.setValue(percent)
