@@ -7,14 +7,14 @@ from aqt import mw
 
 from threading import Event
 
-from . import assets, collection, hash, translate, tts, util
+from . import assets, collection, hashing, translate, tts, util
 
 
 # Process and save the tts if possible
 def process_tts(col, question, src, card):
     # Generate text-to-speech
     # Create media filename
-    media_hash = hash.get_media_hash(question)
+    media_hash = hashing.get_media_hash(question)
     media_filename = f'{media_hash}.mp3'
 
     # Get the media location
