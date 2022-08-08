@@ -145,6 +145,7 @@ def process_words(col, deck, words, options, progress, dialogs, event):
     def update():
         dialogs['progress'].ui.textBrowser.append('\n')
         dialogs['progress'].ui.textBrowser.append(f'Generated {translated} cards.')
+        dialogs['progress'].ui.setPercent(100)
     
     mw.taskman.run_on_main(update)
 

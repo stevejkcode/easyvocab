@@ -54,6 +54,9 @@ class ProgressDialog(object):
 
     def updateProgress(self, word, current, total):
         self.textBrowser.append(f'Translated {word}')
-
+        
         percent = math.floor((current / total) * 100)
+        self.setPercent(percent)
+
+    def setPercent(self, percent):
         self.progressBar.setValue(percent)
