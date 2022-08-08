@@ -7,7 +7,7 @@ cd ..
 rm -r **/__pycache__
 
 # Build deployment archive
-zip -9 -r anki-card-builder.ankiaddon \
+zip -9 -r easyvocab.ankiaddon \
     *.py \
     src/*.py \
     manifest.json \
