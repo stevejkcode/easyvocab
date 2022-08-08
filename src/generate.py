@@ -164,7 +164,7 @@ def finish(dialogs, col):
     return wrap
 
 # Cancel running card generation and close out UI elements
-def cancel(dialogs, future, event):
+def cancel(dialogs, future, event, col):
     def wrap():
         # Cancel the future to stop card generation
         future.cancel()
@@ -176,6 +176,9 @@ def cancel(dialogs, future, event):
         # Close UI elements, return user to previous view
         dialogs['progress'].close()
         dialogs['main'].close()
+
+        # Roll back any pending db changes to prevent new cards from being created
+        col.rollback()
 
     return wrap
 
@@ -225,4 +228,4 @@ def generate_cards(col, deck, text, options, dialogs):
                                 wire_buttons(dialogs, col))
 
     # Set up cancel button to cancel card generation
-    dialogs['progress'].ui.buttonBox.rejected.connect(cancel(dialogs, future, event))
+    dialogs['progress'].ui.buttonBox.rejected.connect(cancel(dialogs, future, event, col))
