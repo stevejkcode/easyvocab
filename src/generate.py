@@ -5,6 +5,8 @@ from anki.media import media_paths_from_col_path
 from PyQt5 import QtWidgets
 from aqt import mw
 
+from threading import Event
+
 from . import assets, collection, hash, translate, tts, util
 
 
@@ -124,13 +126,19 @@ def process_word(col, deck, word, options, progress):
 
 # Outer function for running the card generation process
 # Note that this is run inside a background process in anki
-def process_words(col, deck, words, options, progress, dialogs):
+def process_words(col, deck, words, options, progress, dialogs, event):
     total = len(words)
 
     i = 0
     translated = 0
 
     for word in words:
+        # Check to see if the process is cancelled
+        if event.is_set():
+            # If event is set, the task has been cancelled so we need to return to terminate the process
+            return
+        
+        # Otherwise, we can continue processing the words
         if process_word(col, deck, word, options, progress(word, i + 1, total)): translated += 1
         i += 1
     
@@ -156,10 +164,14 @@ def finish(dialogs, col):
     return wrap
 
 # Cancel running card generation and close out UI elements
-def cancel(dialogs, future):
+def cancel(dialogs, future, event):
     def wrap():
         # Cancel the future to stop card generation
         future.cancel()
+
+        # Use the event to signal cancellation if the task is already running
+        # (ThreadPoolExecutor cannot directly cancel an already running task)
+        event.set()
 
         # Close UI elements, return user to previous view
         dialogs['progress'].close()
@@ -205,10 +217,12 @@ def generate_cards(col, deck, text, options, dialogs):
                 
     progress = util.wrap_nonary(dialogs['progress'].ui.updateProgress)
 
+    event = Event()
+
     # Trigger the card generation process in the background
     # The finish handler will be called when the process is finished
-    future = mw.taskman.run_in_background(util.wrap_nonary(process_words)(col, deck, text, options, progress, dialogs),
+    future = mw.taskman.run_in_background(util.wrap_nonary(process_words)(col, deck, text, options, progress, dialogs, event),
                                 wire_buttons(dialogs, col))
 
     # Set up cancel button to cancel card generation
-    dialogs['progress'].ui.buttonBox.rejected.connect(cancel(dialogs, future))
+    dialogs['progress'].ui.buttonBox.rejected.connect(cancel(dialogs, future, event))
