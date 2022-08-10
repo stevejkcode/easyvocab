@@ -1,8 +1,11 @@
 from anki.collection import Collection
 from anki.notetypes_pb2 import ChangeNotetypeRequest
+from anki.buildinfo import version
 
 # Internal imports
 from .assets import nord_basic_fl, nord_basic_fl_reverse
+
+MIN_VERSION="2.1.50"
 
 # Functions for interacting with anki collections
 
@@ -55,13 +58,14 @@ def create_cards(collection, model_id, deck_id, card):
 # Used to build the basic to reverse function below
 def change_note_type(old_model_name, new_model_name):
     def wrap(col, note_id):
-        old_model = col.models.by_name(old_model_name)
-        new_model = col.models.by_name(new_model_name)
+        if version >= MIN_VERSION:
+            old_model = col.models.by_name(old_model_name)
+            new_model = col.models.by_name(new_model_name)
 
-        request = ChangeNotetypeRequest()
-        request.ParseFromString(col.models.change_notetype_info(old_notetype_id=old_model['id'], new_notetype_id=new_model['id']).input.SerializeToString())
-        request.note_ids.extend([ note_id ])
-        return col.models.change_notetype_of_notes(request)
+            request = ChangeNotetypeRequest()
+            request.ParseFromString(col.models.change_notetype_info(old_notetype_id=old_model['id'], new_notetype_id=new_model['id']).input.SerializeToString())
+            request.note_ids.extend([ note_id ])
+            return col.models.change_notetype_of_notes(request)
 
     return wrap
 
