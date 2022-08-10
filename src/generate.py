@@ -37,7 +37,6 @@ def process_tts(col, question, src, card):
 
 # Process an individual word, creating cards for it as needed
 def process_word(col, deck, word, options, progress):
-    print('here')
     # default values
     reverse = False
     num_translations = 2
@@ -70,23 +69,18 @@ def process_word(col, deck, word, options, progress):
     ## Filter for dupes
     # Find duplicate cards
     dupes = collection.find_dupes(col, deck.name, 'ForeignLanguageWord', question)
-    print(dupes)
 
     # Handle duplicate notes / cards
     if len(dupes) > 0:
         dupe = dupes[0]
 
         # Retrieve note and notetype information
-        print('here 1')
         note     = col.get_note(dupe)
         notetype = note.note_type()
-        print('here 2')
 
         # If reverse cards are enabled and note type is forward only, update the notetype to generate a reverse card
         if notetype['name'] == assets.nord_basic_fl.model.name and reverse:
-            print('here 3')
             collection.update_basic_to_reverse(col, dupe)
-            print('here 4')
             return mw.taskman.run_on_main(progress)
         
         # Otherwise, skip creating this card because one already exists in this deck
@@ -139,7 +133,6 @@ def process_words(col, deck, words, options, progress, dialogs, event):
     translated = 0
 
     for word in words:
-        print(f'processing {word}')
         # Check to see if the process is cancelled
         if event.is_set():
             # If event is set, the task has been cancelled so we need to return to terminate the process
@@ -202,8 +195,6 @@ def wire_buttons(dialogs, col):
 
 # Main card generation process
 def generate_cards(col, deck, text, options, dialogs):
-    print('generating cards')
-
     # Build the note types if needed
     assets.build.build_asset(assets.nord_basic_fl.model)
     assets.build.build_asset(assets.nord_basic_fl_reverse.model)
