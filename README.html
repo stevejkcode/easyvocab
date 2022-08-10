@@ -1,22 +1,26 @@
-<h2 style="text-align:center;" id="easyvocab">EasyVocab</h2>
-<div style="display:flex;justify-content:center;"><a href="https://i.imgur.com/Ah0x2t0.png"><img src="https://i.imgur.com/Ah0x2t0.png" width=249 height=350></img></a><a href="https://imgur.com/X6ra5F7.png"><img src="https://imgur.com/X6ra5F7.png" width=267 width=350></img></a><a href="https://imgur.com/Xc55L41.png"><img src="https://imgur.com/Xc55L41.png" width=267 height=350></img></a></div>
-<div style="display:flex;justify-content:center;"><a href="https://i.imgur.com/UOxxbXD.gif"><img src="https://i.imgur.com/UOxxbXD.gif" width=488 height=500></img></a></div>
-<br>
-<div style="display:flex;justify-content:center;"><p>Quick and easy foreign language vocab card generation for <code>anki</code>.</p></div>
-<h3 id="intro">Intro</h3>
-<p>Tired of needing to look up and manually make flash cards for foreign language study? It can quickly add up to hours when creating so many cards... </p>
-<p><b>EasyVocab</b> can generate all those cards for you, with beautifully styled and formatted notes with extra useful information and text-to-speech to help you internalize the sounds of your target language. Generate reverse cards automatically to help establish a two way association with each word and its meaning. Just throw the words you want to learn into a text file or directly into the interface and cards will be generated and added to a deck. <b>EasyVocab</b> uses the <code>googletrans</code> and <code>gTTS</code> python packages to translate your words and generate text-to-speech, so the process is totally free and doesn&#39;t require any premium API keys. </p>
-<h3 id="instructions">Instructions</h3>
-<p>To use the plugin, click on <i>Tools</i> in the main menu and select "Generate Foreign Language Cards" to bring up the interface. From here you can enter the words you would like to generate cards from in the text box at the top. Words are accepted in plaintext only with one word or phrase per line. You may also click "Select file..." and choose a file which will automatically import the words from the file and populate the text box for you. Note that cards are generated from the current value of the text box at the start of the process rather than the contents of the file, so any updates you make in the window after file import will change the generated cards.</p>
-<p>From there you can configure various settings for the import.</p>
-<p><b>Source Language</b> is the language of the words you would like to import.</p>
-<p><b>Target Language</b> is the language you would like to translate the words to (Default: English).</p>
-<p><b>Deck</b> controls which deck to import the new cards into. Note that if a card already exists for a given word in the deck it will be skipped rather than creating a duplicate.</p>
-<p><b>Create reverse cards</b> Toggle reverse card generation. Reverse cards have the <b>Target Language</b> translation on the front and the <b>Source Language</b> word on the back.</p>
-<p><b>Enable text-to-speech</b> Toggle text-to-speech. <b>EasyVocab</b> uses GoogleTTS to generate audio for your cards.</p>
-<p><b>Default number of translations</b> The default number of possible words to include in the translation.</p>
-<h3 id="acknowledgements">Acknowledgements</h3>
-<p>This addon was heavily inspired by <a href="https://github.com/guiferviz/mnemocards">mnemocards</a>, especially the card format. <code>mnemocards</code> is great if you want some more advanced features but it comes with an unnecessary 3 minute pause after every 25 cards that can make very large vocab sets take a long long time to generate. It also generates .apkg files that have to be separately imported into <code>anki</code> and a command line tool with json configuration isn&#39;t convenient for most users. I wanted to make something that can be used directly from <code>anki</code> and is focused on just quickly generating vocab cards to help accelerate language learning.</p>
-<p>I also want to give credit to <a href="https://github.com/pranavdeshai/anki-prettify">anki-prettify</a> for the base card format I extended for foreign language vocabulary. The note type responds to system theme and is responsive to screen size so it displays really nicely on mobile. I also tried to make the card format as easily human editable as possible without relying on embedded html in the card fields for styling (with one small exception) so you should be able to quickly update any cards that <code>googletrans</code> produces questionable translations for.</p></div>
-<h3 id="contact">Contact</h3>
-<p>If you encounter any issues with the addon you can reach me on here, open an issue on <a href="https://github.com/stevejkcode/easyvocab">GitHub</a>, or <a href="mailto:stevekcode@gmail.com?subject=Hey your thing don't work 😥">email me</a> directly.</p>
+<b>EasyVocab</b>
+<div><a href="https://i.imgur.com/Ah0x2t0.png" rel="nofollow"><img src="https://imgur.com/FzxfUPG.png"></a><a href="https://imgur.com/X6ra5F7.png" rel="nofollow"><img src="https://imgur.com/ewt74fa.png"></a><a href="https://imgur.com/Xc55L41.png" rel="nofollow"><img src="https://imgur.com/QGR4mTz.png"></a></div>
+<div><a href="https://i.imgur.com/UOxxbXD.gif" rel="nofollow"><img src="https://imgur.com/Qxrr1ju.gif"></a></div>
+
+<div>Quick and easy foreign language vocab card generation for <code>anki</code></div>
+<b>Intro</b>
+Tired of needing to look up and manually make flash cards for foreign language study? It can quickly add up to hours when creating so many cards...
+<b>EasyVocab</b> can generate all those cards for you, with beautifully styled and formatted notes with extra useful information and text-to-speech to help you internalize the sounds of your target language. Generate reverse cards automatically to help establish a two way association with each word and its meaning. Just throw the words you want to learn into a text file or directly into the interface and cards will be generated and added to a deck. <b>EasyVocab</b> uses the <code>googletrans</code> and <code>gTTS</code> python packages to translate your words and generate text-to-speech, so the process is totally free and doesn't require any premium API keys.
+
+<b>Instructions</b>
+To use the plugin, click on <i>Tools</i> in the main menu and select "Generate Foreign Language Cards" to bring up the interface. From here you can enter the words you would like to generate cards from in the text box at the top. Words are accepted in plaintext only with one word or phrase per line. You may also click "Select file..." and choose a file which will automatically import the words from the file and populate the text box for you. Note that cards are generated from the current value of the text box at the start of the process rather than the contents of the file, so any updates you make in the window after file import will change the generated cards.
+
+From there you can configure various settings for the import.
+<b>Source Language</b> is the language of the words you would like to import.
+<b>Target Language</b> is the language you would like to translate the words to (Default: English).
+<b>Deck</b> controls which deck to import the new cards into. Note that if a card already exists for a given word in the deck it will be skipped rather than creating a duplicate.
+<b>Create reverse cards</b> Toggle reverse card generation. Reverse cards have the <b>Target Language</b> translation on the front and the <b>Source Language</b> word on the back.
+<b>Enable text-to-speech</b> Toggle text-to-speech. <b>EasyVocab</b> uses GoogleTTS to generate audio for your cards.
+<b>Default number of translations</b> The default number of possible words to include in the translation.
+
+<b>Acknowledgements</b>
+This addon was heavily inspired by <a href="https://github.com/guiferviz/mnemocards" rel="nofollow">mnemocards</a>, especially the card format. <code>mnemocards</code> is great if you want some more advanced features but it comes with an unnecessary 3 minute pause after every 25 cards that can make very large vocab sets take a long long time to generate. It also generates .apkg files that have to be separately imported into <code>anki</code> and a command line tool with json configuration isn't convenient for most users. I wanted to make something that can be used directly from <code>anki</code> and is focused on just quickly generating vocab cards to help accelerate language learning.
+I also want to give credit to <a href="https://github.com/pranavdeshai/anki-prettify" rel="nofollow">anki-prettify</a> for the base card format I extended for foreign language vocabulary. The note type responds to system theme and is responsive to screen size so it displays really nicely on mobile. I also tried to make the card format as easily human editable as possible without relying on embedded html in the card fields for styling (with one small exception) so you should be able to quickly update any cards that <code>googletrans</code> produces questionable translations for.
+
+<b>Contact</b>
+If you encounter any issues with the addon you can reach me on here, open an issue on <a href="https://github.com/stevejkcode/easyvocab" rel="nofollow">GitHub</a>, or <a href="mailto:stevekcode@gmail.com?subject=Hey your thing don't work 😥">email me</a> directly.
