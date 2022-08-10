@@ -4,7 +4,7 @@
 cd ..
 
 # Clean out any pycache files to prevent their inclusion
-rm -r **/__pycache__
+find . | grep -E "(/__pycache__$|\.pyc$|\.pyo$)" | xargs rm -rf
 
 # Build deployment archive
 zip -9 -r easyvocab.ankiaddon \
