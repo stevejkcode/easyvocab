@@ -22,7 +22,10 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "site-packag
 import googletrans
 
 from . import file_select_dialog, progress_dialog
-from .. import util, generate
+from .. import util, generate, tts
+
+# Retrieve the list of supported languages
+LANGUAGES = tts.get_supported_langs()
 
 
 class MainDialog(object):
@@ -166,8 +169,11 @@ class MainDialog(object):
         options['reverse'] = reverse
 
         # Get the tts setting from the main dialog
-        tts = self.checkBox_2.isChecked()
-        options['tts'] = tts
+        if self.checkBox_2.isEnabled():
+            tts = self.checkBox_2.isChecked()
+            options['tts'] = tts
+        else:
+            options['tts'] = False
 
         # Get the number of translations to include
         num_translations = self.spinBox.value()
@@ -192,6 +198,9 @@ class MainDialog(object):
         # set the default target language to english
         index = self.comboBox_3.findData("en")
         self.comboBox_3.setCurrentIndex(index)
+
+        # grey / ungrey tts box based on target language selection
+        self.comboBox_2.currentIndexChanged.connect(self.checkTTS(self.comboBox_2, self.checkBox_2))
 
         # wire the accept button
         self.buttonBox.accepted.connect(util.wrap_nonary(self.accept_dialog)(Dialog))
@@ -224,3 +233,20 @@ class MainDialog(object):
 
         for language_code, language_name in languages.items():
             comboBox.addItem(util.capitalize(language_name), language_code)
+
+    # Check if TTS is supported for the selected language
+    # If not, grey out the TTS option in the UI so it cannot be selected
+    def checkTTS(self, comboBox, checkBox):
+        def wrap():
+            # Retrieve the currently selected language
+            lang = comboBox.currentData()
+
+            # Find the language in the supported TTS languages (if present)
+            tts_entry = LANGUAGES.get(lang, None)
+
+            if tts_entry is not None:
+                checkBox.setDisabled(False)
+            else:
+                checkBox.setDisabled(True)
+
+        return wrap
