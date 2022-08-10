@@ -119,7 +119,7 @@ class MainDialog(object):
         self.spinBox.setToolTip(_translate("Dialog", "The default number of translations to use on the reverse side of each card"))
         self.label_2.setText(_translate("Dialog", "Default number of translations"))
         self.comboBox.setToolTip(_translate("Dialog", "Choose which deck to import the generated cards into."))
-        self.comboBox.setPlaceholderText(_translate("Dialog", "Deck"))
+        # self.comboBox.setPlaceholderText(_translate("Dialog", "Deck"))
         self.checkBox.setToolTip(_translate("Dialog", "Create reverse vocab cards in addition to normal ones."))
         self.checkBox.setText(_translate("Dialog", "Create reverse cards"))
         self.checkBox_2.setToolTip(_translate("Dialog", "Enable text to speech. Google TTS will be used to generate audio for your cards."))
