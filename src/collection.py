@@ -32,6 +32,7 @@ def create_cards(collection, model_id, deck_id, card):
     note.fields = [
         card['ForeignLanguageWord'],
         card['YourLanguageDefinition'],
+        card['YourLanguageImage'],
         card['ForeignLanguagePronunciation'],
         card['ForeignLanguageExplanationWordType_1'],
         card['ForeignLanguageExplanationDetails_1'],

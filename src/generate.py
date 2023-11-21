@@ -97,6 +97,7 @@ def process_word(col, deck, word, options, progress):
     card = {
         'ForeignLanguageWord': question,
         'YourLanguageDefinition': answer,
+        'YourLanguageImage': '',
         'ForeignLanguagePronunciation': '',
         'ForeignLanguageExplanationWordType_1': translations[1],
         'ForeignLanguageExplanationDetails_1': translations[2],
