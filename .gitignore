@@ -3,3 +3,5 @@
 venv/*
 env/*
 site-packages/*
+
+.idea
