@@ -21,6 +21,7 @@ with open(os.path.join(os.path.dirname(__file__), './main.css'), 'r') as file:
 fields = [
     'ForeignLanguageWord',
     'YourLanguageDefinition',
+    'YourLanguageImage',
     'ForeignLanguagePronunciation',
     'ForeignLanguageExplanationWordType_1',
     'ForeignLanguageExplanationDetails_1',
